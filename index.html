@@ -6,326 +6,156 @@
   <title>Our Family Calendar 🏡</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-/* ── Reset & Base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'DM Sans', Georgia, sans-serif;
-  background: #faf9f7;
-  color: #1a1a2e;
-  min-height: 100vh;
-}
-
+body { font-family: 'DM Sans', Georgia, sans-serif; background: #faf9f7; color: #1a1a2e; min-height: 100vh; }
 button { cursor: pointer; font-family: inherit; }
 input, select, textarea { font-family: inherit; }
-
-/* ── Loading ──────────────────────────────────────────────────────────────── */
-.loading {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; min-height: 100vh; gap: 14px;
-}
-.loading-icon  { font-size: 42px; }
-.loading-text  { font-size: 15px; color: #94a3b8; }
-
-/* ── Header ───────────────────────────────────────────────────────────────── */
-.header {
-  background: #1a1a2e;
-  padding: 18px 24px 14px;
-  display: flex; align-items: center;
-  justify-content: space-between; flex-wrap: wrap; gap: 12px;
-}
-.header-sub     { color: #e8d5b7; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3px; }
-.header-title   { color: #fff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; font-family: 'Playfair Display', Georgia, serif; }
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 14px; }
+.loading-icon { font-size: 42px; }
+.loading-text { font-size: 15px; color: #94a3b8; }
+.header { background: #1a1a2e; padding: 18px 24px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.header-sub { color: #e8d5b7; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3px; }
+.header-title { color: #fff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; font-family: 'Playfair Display', Georgia, serif; }
 .header-members { color: #64748b; font-size: 11px; margin-top: 3px; }
-.header-right   { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-.sync-badge {
-  font-size: 11px; color: #4ade80; background: rgba(74,222,128,0.12);
-  border: 1px solid rgba(74,222,128,0.25); border-radius: 20px;
-  padding: 3px 10px; font-weight: 600;
-}
-
+.header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sync-badge { font-size: 11px; color: #4ade80; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.25); border-radius: 20px; padding: 3px 10px; font-weight: 600; }
 .view-tabs { display: flex; gap: 5px; }
-.tab-btn {
-  background: rgba(255,255,255,0.08); color: #e8d5b7;
-  border: 1px solid rgba(232,213,183,0.25); border-radius: 8px;
-  padding: 6px 13px; font-size: 12px; font-weight: 400; transition: all 0.15s;
-}
+.tab-btn { background: rgba(255,255,255,0.08); color: #e8d5b7; border: 1px solid rgba(232,213,183,0.25); border-radius: 8px; padding: 6px 13px; font-size: 12px; font-weight: 400; transition: all 0.15s; }
 .tab-btn.active { background: #e8d5b7; color: #1a1a2e; font-weight: 700; }
 .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.14); }
-
-.btn-add {
-  background: #c9a96e; color: #1a1a2e; border: none;
-  border-radius: 8px; padding: 7px 16px; font-size: 12px;
-  font-weight: 700; transition: opacity 0.15s;
-}
+.btn-add { background: #c9a96e; color: #1a1a2e; border: none; border-radius: 8px; padding: 7px 16px; font-size: 12px; font-weight: 700; transition: opacity 0.15s; }
 .btn-add:hover { opacity: 0.88; }
-
-/* ── Filter Bar ───────────────────────────────────────────────────────────── */
-.filter-bar {
-  background: #16213e; padding: 8px 24px;
-  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
-}
+.filter-bar { background: #16213e; padding: 8px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .filter-label { color: #475569; font-size: 10px; letter-spacing: 2px; }
-.fsel {
-  background: #0f3460; color: #e8d5b7;
-  border: 1px solid rgba(232,213,183,0.2); border-radius: 7px;
-  padding: 5px 9px; font-size: 11px;
-}
-
-/* ── Nav ──────────────────────────────────────────────────────────────────── */
-.cal-nav {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 24px 6px;
-}
-.nav-btn {
-  background: #fff; border: 1px solid #e2e8f0; border-radius: 9px;
-  width: 36px; height: 36px; font-size: 20px; color: #1a1a2e;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-}
+.fsel { background: #0f3460; color: #e8d5b7; border: 1px solid rgba(232,213,183,0.2); border-radius: 7px; padding: 5px 9px; font-size: 11px; }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; padding: 13px 24px 6px; }
+.nav-btn { background: #fff; border: 1px solid #e2e8f0; border-radius: 9px; width: 36px; height: 36px; font-size: 20px; color: #1a1a2e; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
 .nav-btn:hover { background: #f1f5f9; }
-.nav-center   { display: flex; align-items: center; gap: 10px; }
-.nav-label    { font-size: 20px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
-.btn-today {
-  font-size: 10px; color: #94a3b8; background: none;
-  border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 9px;
-}
+.nav-center { display: flex; align-items: center; gap: 10px; }
+.nav-label { font-size: 20px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; cursor: pointer; border-bottom: 2px dashed #c9a96e; padding-bottom: 1px; }
+.nav-label:hover { color: #c9a96e; }
+.btn-today { font-size: 10px; color: #94a3b8; background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 9px; }
 .btn-today:hover { background: #f1f5f9; }
-
-/* ── Month View ───────────────────────────────────────────────────────────── */
+/* Jump picker */
+.jump-picker { display: flex; gap: 8px; align-items: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.jump-picker select { border: 1px solid #e2e8f0; border-radius: 7px; padding: 5px 8px; font-size: 13px; background: #fafafa; outline: none; }
+.jump-picker select:focus { border-color: #c9a96e; }
+.jump-go { background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 7px; padding: 6px 14px; font-size: 12px; font-weight: 700; }
+.jump-cancel { background: none; border: none; font-size: 18px; color: #94a3b8; padding: 0 4px; }
 .month-wrap { padding: 4px 16px 20px; }
-.day-headers {
-  display: grid; grid-template-columns: repeat(7,1fr);
-  gap: 3px; margin-bottom: 3px;
-}
-.day-hdr {
-  text-align: center; font-size: 10px; font-weight: 700;
-  color: #94a3b8; letter-spacing: 2px; padding: 5px 0;
-  text-transform: uppercase;
-}
+.day-headers { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 3px; }
+.day-hdr { text-align: center; font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 2px; padding: 5px 0; text-transform: uppercase; }
 .month-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-
-.day-cell {
-  min-height: 84px; border-radius: 10px; padding: 6px;
-  cursor: pointer; transition: all 0.12s;
-  background: #fff; border: 1px solid #ede9e3;
-}
-.day-cell.empty   { background: transparent; border: none; cursor: default; }
-.day-cell.today   { background: #1a1a2e; border-color: #1a1a2e; box-shadow: 0 2px 10px rgba(26,26,46,0.18); }
-.day-cell.selected{ background: #f0ebe3; border: 2px solid #c9a96e; }
+.day-cell { min-height: 84px; border-radius: 10px; padding: 6px; cursor: pointer; transition: all 0.12s; background: #fff; border: 1px solid #ede9e3; }
+.day-cell.empty { background: transparent; border: none; cursor: default; }
+.day-cell.today { background: #1a1a2e; border-color: #1a1a2e; box-shadow: 0 2px 10px rgba(26,26,46,0.18); }
+.day-cell.selected { background: #f0ebe3; border: 2px solid #c9a96e; }
 .day-cell:hover:not(.empty):not(.today):not(.selected) { background: #f8f5f0; }
-
 .day-num { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
 .today .day-num { color: #e8d5b7; }
-
-.ev-pill {
-  font-size: 9px; color: #fff; border-radius: 4px;
-  padding: 2px 5px; margin-bottom: 2px;
-  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-  cursor: pointer; transition: opacity 0.12s;
-}
+.ev-pill { font-size: 9px; color: #fff; border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; transition: opacity 0.12s; }
 .ev-pill:hover { opacity: 0.82; }
 .ev-more { font-size: 9px; color: #94a3b8; }
-
-/* ── Day Panel ────────────────────────────────────────────────────────────── */
-.day-panel {
-  margin-top: 12px; background: #fff; border-radius: 14px;
-  border: 1px solid #ede9e3; padding: 16px 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-}
-.day-panel-hdr {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-}
+.day-panel { margin-top: 12px; background: #fff; border-radius: 14px; border: 1px solid #ede9e3; padding: 16px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.day-panel-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .day-panel-title { font-weight: 700; font-size: 15px; }
 .day-panel-empty { color: #94a3b8; font-size: 13px; }
-.btn-add-sm {
-  background: #1a1a2e; color: #e8d5b7; border: none;
-  border-radius: 8px; padding: 5px 13px; font-size: 12px;
-}
+.btn-add-sm { background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 8px; padding: 5px 13px; font-size: 12px; }
 .btn-add-sm:hover { opacity: 0.88; }
-
-/* ── Event Cards ──────────────────────────────────────────────────────────── */
-.ev-card {
-  border-radius: 10px; padding: 10px 13px; margin-bottom: 7px;
-  cursor: pointer; display: flex; justify-content: space-between;
-  align-items: flex-start; transition: opacity 0.12s;
-}
+.ev-card { border-radius: 10px; padding: 10px 13px; margin-bottom: 7px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; transition: opacity 0.12s; }
 .ev-card:hover { opacity: 0.88; }
-.ev-card-body  { flex: 1; }
+.ev-card-body { flex: 1; }
 .ev-card-title { font-weight: 700; font-size: 13px; }
-.ev-card-meta  { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.ev-card-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
 .ev-card-notes { font-size: 11px; color: #64748b; margin-top: 3px; }
-.ev-edit-badge {
-  font-size: 10px; font-weight: 700; border-radius: 5px;
-  padding: 2px 7px; white-space: nowrap; align-self: flex-start;
-  flex-shrink: 0; margin-left: 8px;
-}
-
-/* ── Week View ────────────────────────────────────────────────────────────── */
-.week-wrap  { padding: 10px 16px 24px; }
-.week-grid  { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-bottom: 12px; }
-
-.week-cell {
-  border-radius: 12px; cursor: pointer; min-height: 140px;
-  padding: 10px 8px; transition: all 0.12s;
-  background: #fff; border: 1px solid #ede9e3;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}
-.week-cell.today    { background: #1a1a2e; border-color: #1a1a2e; box-shadow: 0 4px 16px rgba(26,26,46,0.15); }
+.ev-edit-badge { font-size: 10px; font-weight: 700; border-radius: 5px; padding: 2px 7px; white-space: nowrap; align-self: flex-start; flex-shrink: 0; margin-left: 8px; }
+.week-wrap { padding: 10px 16px 24px; }
+.week-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-bottom: 12px; }
+.week-cell { border-radius: 12px; cursor: pointer; min-height: 140px; padding: 10px 8px; transition: all 0.12s; background: #fff; border: 1px solid #ede9e3; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.week-cell.today { background: #1a1a2e; border-color: #1a1a2e; box-shadow: 0 4px 16px rgba(26,26,46,0.15); }
 .week-cell.selected { background: #f0ebe3; border: 2px solid #c9a96e; }
 .week-cell:hover:not(.today):not(.selected) { background: #f8f5f0; }
-
-.week-cell-hdr  { text-align: center; margin-bottom: 7px; }
-.week-day-name  { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; }
+.week-cell-hdr { text-align: center; margin-bottom: 7px; }
+.week-day-name { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; }
 .today .week-day-name { color: #e8d5b7; }
-.week-day-num   { font-size: 22px; font-weight: 700; line-height: 1.2; }
-.today .week-day-num  { color: #fff; }
-.week-month     { font-size: 9px; color: #c4b89a; }
-.today .week-month    { color: #94a3b8; }
-.week-empty     { font-size: 10px; color: #d1cdc7; text-align: center; }
-.today .week-empty    { color: #475569; }
-
-.week-add-btn {
-  display: block; width: 100%; margin-top: 6px;
-  background: none; border: 1px dashed #e2e8f0; border-radius: 5px;
-  font-size: 10px; color: #94a3b8; padding: 3px 0;
-}
-.today .week-add-btn  { border-color: rgba(232,213,183,0.3); color: #e8d5b7; }
-.week-add-btn:hover   { background: rgba(0,0,0,0.03); }
-
-.week-summary {
-  background: #fff; border-radius: 12px; border: 1px solid #ede9e3; padding: 14px 18px;
-}
+.week-day-num { font-size: 22px; font-weight: 700; line-height: 1.2; }
+.today .week-day-num { color: #fff; }
+.week-month { font-size: 9px; color: #c4b89a; }
+.today .week-month { color: #94a3b8; }
+.week-empty { font-size: 10px; color: #d1cdc7; text-align: center; }
+.today .week-empty { color: #475569; }
+.week-add-btn { display: block; width: 100%; margin-top: 6px; background: none; border: 1px dashed #e2e8f0; border-radius: 5px; font-size: 10px; color: #94a3b8; padding: 3px 0; }
+.today .week-add-btn { border-color: rgba(232,213,183,0.3); color: #e8d5b7; }
+.week-add-btn:hover { background: rgba(0,0,0,0.03); }
+.week-summary { background: #fff; border-radius: 12px; border: 1px solid #ede9e3; padding: 14px 18px; }
 .week-summary-title { font-weight: 700; font-size: 13px; margin-bottom: 10px; }
 .week-summary-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 8px; }
-.week-stat      { font-size: 12px; color: #64748b; }
-.week-stat-num  { font-size: 26px; font-weight: 700; color: #1a1a2e; display: block; line-height: 1; }
+.week-stat { font-size: 12px; color: #64748b; }
+.week-stat-num { font-size: 26px; font-weight: 700; color: #1a1a2e; display: block; line-height: 1; }
 .week-summary-cats { display: flex; flex-wrap: wrap; gap: 6px; }
-
-/* ── List View ────────────────────────────────────────────────────────────── */
-.list-wrap      { padding: 12px 24px 24px; }
-.list-count     { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
-.list-empty     { color: #94a3b8; text-align: center; padding: 40px 0; }
-.list-date-hdr  {
-  font-weight: 700; font-size: 11px; color: #94a3b8;
-  letter-spacing: 2px; text-transform: uppercase; margin: 16px 0 7px;
-}
-
-/* ── Legend ───────────────────────────────────────────────────────────────── */
+.list-wrap { padding: 12px 24px 24px; }
+.list-count { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+.list-empty { color: #94a3b8; text-align: center; padding: 40px 0; }
+.list-date-hdr { font-weight: 700; font-size: 11px; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; margin: 16px 0 7px; }
 .legend { padding: 0 20px 28px; display: flex; flex-wrap: wrap; gap: 5px; }
-.legend-item {
-  display: flex; align-items: center; gap: 5px;
-  border-radius: 20px; padding: 3px 10px;
-}
+.legend-item { display: flex; align-items: center; gap: 5px; border-radius: 20px; padding: 3px 10px; }
 .legend-item span { font-size: 10px; font-weight: 600; }
 .legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
-/* ── Notes Section ────────────────────────────────────────────────────────── */
-.notes-section {
-  margin: 4px 16px 32px; background: #fff; border-radius: 16px;
-  border: 1px solid #ede9e3; overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-.notes-header {
-  background: #1a1a2e; padding: 13px 20px;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-}
+.notes-section { margin: 4px 16px 32px; background: #fff; border-radius: 16px; border: 1px solid #ede9e3; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.notes-header { background: #1a1a2e; padding: 13px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .notes-title-row { display: flex; align-items: center; gap: 10px; }
-.notes-title     { font-weight: 700; font-size: 15px; color: #fff; }
-.notes-badge     {
-  background: #c9a96e; color: #1a1a2e; border-radius: 20px;
-  font-size: 11px; font-weight: 700; padding: 2px 8px;
-}
+.notes-title { font-weight: 700; font-size: 15px; color: #fff; }
+.notes-badge { background: #c9a96e; color: #1a1a2e; border-radius: 20px; font-size: 11px; font-weight: 700; padding: 2px 8px; }
 .notes-filters { display: flex; gap: 5px; }
-.notes-filter-btn {
-  background: rgba(255,255,255,0.08); color: #e8d5b7;
-  border: 1px solid rgba(232,213,183,0.25); border-radius: 7px;
-  padding: 4px 11px; font-size: 11px;
-}
+.notes-filter-btn { background: rgba(255,255,255,0.08); color: #e8d5b7; border: 1px solid rgba(232,213,183,0.25); border-radius: 7px; padding: 4px 11px; font-size: 11px; }
 .notes-filter-btn.active { background: #e8d5b7; color: #1a1a2e; font-weight: 700; }
-
-.notes-add {
-  padding: 13px 18px; background: #f8f6f2; border-bottom: 1px solid #ede9e3;
-}
+.notes-add { padding: 13px 18px; background: #f8f6f2; border-bottom: 1px solid #ede9e3; }
 .notes-input-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-.note-input {
-  flex: 1; min-width: 200px; border: 1px solid #e2e8f0; border-radius: 9px;
-  padding: 9px 13px; font-size: 13px; background: #fff; outline: none;
-}
+.note-input { flex: 1; min-width: 200px; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 13px; font-size: 13px; background: #fff; outline: none; }
 .note-input:focus { border-color: #c9a96e; }
-.btn-add-note {
-  background: #1a1a2e; color: #e8d5b7; border: none;
-  border-radius: 9px; padding: 9px 16px; font-size: 13px; font-weight: 700;
-  white-space: nowrap;
-}
+.btn-add-note { background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 9px; padding: 9px 16px; font-size: 13px; font-weight: 700; white-space: nowrap; }
 .btn-add-note:hover { opacity: 0.88; }
 .notes-meta-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.note-sel {
-  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
-  padding: 5px 10px; font-size: 12px;
-}
-
-.notes-list  { padding: 12px 18px 16px; }
+.note-sel { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 10px; font-size: 12px; }
+.notes-list { padding: 12px 18px 16px; }
 .notes-empty { text-align: center; color: #94a3b8; font-size: 13px; padding: 20px 0; }
-
-.note-card {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 12px; margin-bottom: 6px;
-  border: 1px solid #ede9e3; border-radius: 10px;
-  transition: all 0.15s;
-}
-.note-card.done   { background: #f8fafc; opacity: 0.65; }
+.note-card { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; margin-bottom: 6px; border: 1px solid #ede9e3; border-radius: 10px; transition: all 0.15s; }
+.note-card.done { background: #f8fafc; opacity: 0.65; }
 .note-card.pinned { background: #fffbf0; border-color: #e8d5b7; }
-
-.note-check {
-  flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px;
-  border-radius: 5px; border: 2px solid #cbd5e1; background: transparent;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; color: #fff; transition: all 0.15s;
-}
+.note-check { flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px; border-radius: 5px; border: 2px solid #cbd5e1; background: transparent; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; transition: all 0.15s; }
 .note-check.checked { background: #34d399; border-color: #34d399; }
-
-.note-body   { flex: 1; min-width: 0; }
-.note-text   { font-size: 13px; word-break: break-word; }
+.note-body { flex: 1; min-width: 0; }
+.note-text { font-size: 13px; word-break: break-word; }
 .note-text.struck { text-decoration: line-through; color: #94a3b8; }
-.note-meta   { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; align-items: center; }
+.note-meta { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; align-items: center; }
 .note-cat-badge { font-size: 10px; border-radius: 5px; padding: 1px 7px; font-weight: 600; }
-.note-for    { font-size: 10px; color: #94a3b8; }
-.note-ts     { font-size: 10px; color: #c4b89a; }
-
+.note-for { font-size: 10px; color: #94a3b8; }
+.note-ts { font-size: 10px; color: #c4b89a; }
 .note-actions { display: flex; gap: 4px; flex-shrink: 0; }
-.note-pin-btn, .note-del-btn {
-  background: none; border: none; font-size: 13px; padding: 2px;
-}
-.note-pin-btn        { opacity: 0.3; }
+.note-pin-btn, .note-del-btn { background: none; border: none; font-size: 13px; padding: 2px; }
+.note-pin-btn { opacity: 0.3; }
 .note-pin-btn.pinned { opacity: 1; }
-.note-del-btn        { opacity: 0.35; }
-.note-del-btn:hover  { opacity: 0.8; }
-
-/* ── Modal ────────────────────────────────────────────────────────────────── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000; padding: 16px;
-}
-.modal {
-  background: #fff; border-radius: 18px; padding: 24px 24px 18px;
-  width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
-}
-.modal-title  { font-weight: 700; font-size: 17px; margin-bottom: 16px; font-family: 'Playfair Display', Georgia, serif; }
-.modal-lbl    { display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; margin-top: 12px; }
-.modal-inp    { width: 100%; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 12px; font-size: 13px; background: #fafafa; outline: none; }
+.note-del-btn { opacity: 0.35; }
+.note-del-btn:hover { opacity: 0.8; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+.modal { background: #fff; border-radius: 18px; padding: 24px 24px 18px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.22); }
+.modal-title { font-weight: 700; font-size: 17px; margin-bottom: 16px; font-family: 'Playfair Display', Georgia, serif; }
+.modal-lbl { display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; margin-top: 12px; }
+.modal-inp { width: 100%; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 12px; font-size: 13px; background: #fafafa; outline: none; }
 .modal-inp:focus { border-color: #c9a96e; }
-.modal-ta     { resize: vertical; min-height: 60px; }
-.modal-btns   { display: flex; gap: 8px; margin-top: 18px; }
-.modal-save   { flex: 1; background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 9px; padding: 11px; font-size: 13px; font-weight: 700; }
-.modal-save:hover  { opacity: 0.88; }
+.modal-ta { resize: vertical; min-height: 60px; }
+.modal-btns { display: flex; gap: 8px; margin-top: 18px; }
+.modal-save { flex: 1; background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 9px; padding: 11px; font-size: 13px; font-weight: 700; }
+.modal-save:hover { opacity: 0.88; }
 .modal-cancel { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; border-radius: 9px; padding: 11px 13px; font-size: 13px; }
 .modal-delete { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; border-radius: 9px; padding: 11px 12px; font-size: 13px; }
-
-/* ── Responsive ───────────────────────────────────────────────────────────── */
+/* Time toggle */
+.time-toggle { display: flex; gap: 8px; margin-top: 4px; }
+.time-toggle-btn { flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; background: #fafafa; color: #64748b; transition: all 0.15s; }
+.time-toggle-btn.active { background: #1a1a2e; color: #e8d5b7; border-color: #1a1a2e; font-weight: 700; }
+.time-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.time-row input[type=time] { flex: 1; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 12px; font-size: 13px; background: #fafafa; outline: none; }
+.time-row input[type=time]:focus { border-color: #c9a96e; }
 @media (max-width: 640px) {
   .header { padding: 14px 16px; }
   .header-title { font-size: 20px; }
@@ -333,7 +163,7 @@ input, select, textarea { font-family: inherit; }
   .nav-label { font-size: 16px; }
   .month-wrap, .week-wrap, .list-wrap { padding-left: 10px; padding-right: 10px; }
   .day-cell { min-height: 60px; padding: 4px; }
-  .day-num  { font-size: 10px; }
+  .day-num { font-size: 10px; }
   .week-grid { grid-template-columns: repeat(7,1fr); gap: 3px; }
   .week-cell { min-height: 90px; padding: 6px 4px; }
   .week-day-num { font-size: 16px; }
@@ -362,10 +192,9 @@ input, select, textarea { font-family: inherit; }
       messagingSenderId: "880082862665",
       appId:             "1:880082862665:web:44c60e52b2cdb9ff537598",
     };
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getDatabase(firebaseApp);
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getDatabase(fbApp);
 
-    // ── Data ──────────────────────────────────────────────────────────────────
     const CATEGORIES = [
       { id:"birthday",    label:"🎂 Birthday",      color:"#f87171", bg:"#fef2f2" },
       { id:"appointment", label:"🏥 Appointment",    color:"#60a5fa", bg:"#eff6ff" },
@@ -385,45 +214,45 @@ input, select, textarea { font-family: inherit; }
     ];
     const MEMBERS = ["Both of Us","Me","Sky","All Pets","Dogs","Cat"];
     const RECUR_LABELS = { none:"One-time", weekly:"Weekly", biweekly:"Every other week", monthly:"Monthly", bimonthly:"Every other month", yearly:"Yearly" };
+    const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const SEED_EVENTS = [
-      { id:"e101", title:"🎂 My Birthday",           date:"2026-01-06", category:"birthday",    member:"Me",         recurring:"yearly",    notes:"" },
-      { id:"e102", title:"🎂 Sky's Birthday",        date:"2026-02-18", category:"birthday",    member:"Sky",        recurring:"yearly",    notes:"Born 1993" },
-      { id:"e201", title:"💊 Noodles Medicine",      date:"2026-03-22", category:"vet",         member:"Dogs",       recurring:"monthly",   notes:"Monthly medicine for Noodles" },
-      { id:"e202", title:"💊 Tyde Medicine",         date:"2026-03-15", category:"vet",         member:"Dogs",       recurring:"monthly",   notes:"Monthly medicine for Tyde" },
-      { id:"e203", title:"💊 Iko Medicine",          date:"2026-03-15", category:"vet",         member:"Dogs",       recurring:"monthly",   notes:"Monthly medicine for Iko" },
-      { id:"e204", title:"💊 Peanut Medicine",       date:"2026-03-03", category:"vet",         member:"Cat",        recurring:"bimonthly", notes:"Every other month — Mar, May, Jul, Sep, Nov" },
-      { id:"e301", title:"🧠 Therapy",               date:"2026-03-13", category:"appointment", member:"Me",         recurring:"biweekly",  notes:"Every other Friday" },
-      { id:"e501", title:"🏠 Work From Home",        date:"2026-03-12", category:"wfh",         member:"Me",         recurring:"weekly",    notes:"Every Thursday" },
-      { id:"e601", title:"🐕 Dog Sitting — Blue",   date:"2026-03-08", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 1 of 4" },
-      { id:"e602", title:"🐕 Dog Sitting — Blue",   date:"2026-03-09", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 2 of 4" },
-      { id:"e603", title:"🐕 Dog Sitting — Blue",   date:"2026-03-10", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 3 of 4" },
-      { id:"e604", title:"🐕 Dog Sitting — Blue",   date:"2026-03-11", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 4 of 4 · Last day" },
-      { id:"e605", title:"🐕 Dog Sitting — Blue (2nd Stay)", date:"2026-03-25", category:"vet", member:"Both of Us", recurring:"none",     notes:"Edit dates once confirmed" },
-      { id:"e401", title:"🎤 Ashley Gavin Comedy",  date:"2026-03-20", category:"date",        member:"Both of Us", recurring:"none",      notes:"9:15 PM · Cap City Comedy Club, Austin TX · 2 tickets" },
-      { id:"e402", title:"🎤 Amber Autry Comedy",   date:"2026-06-06", category:"date",        member:"Both of Us", recurring:"none",      notes:"7:00 PM 🎭" },
-      { id:"h101", title:"🇺🇸 New Years Day",        date:"2026-01-01", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h102", title:"🇺🇸 MLK Day",             date:"2026-01-19", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h103", title:"❤️ Valentines Day",        date:"2026-02-14", category:"date",        member:"Both of Us", recurring:"none",      notes:"Plan something special! 💕" },
-      { id:"h104", title:"🇺🇸 Presidents Day",       date:"2026-02-16", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h105", title:"☘️ St Patricks Day",       date:"2026-03-17", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h106", title:"🌸 Spring First Day",      date:"2026-03-20", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h107", title:"🐣 Easter",                date:"2026-04-05", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h108", title:"👩 Mothers Day",           date:"2026-05-10", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h109", title:"🇺🇸 Memorial Day",         date:"2026-05-25", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h110", title:"👨 Fathers Day",           date:"2026-06-21", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h111", title:"☀️ Summer First Day",      date:"2026-06-21", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h112", title:"🇺🇸 Independence Day",     date:"2026-07-04", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h113", title:"🇺🇸 Labor Day",            date:"2026-09-07", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h114", title:"🍂 Fall First Day",        date:"2026-09-23", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h115", title:"🎃 Halloween",             date:"2026-10-31", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h116", title:"🇺🇸 Veterans Day",         date:"2026-11-11", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h117", title:"🦃 Thanksgiving",          date:"2026-11-26", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h118", title:"🎄 Christmas Eve",         date:"2026-12-24", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h119", title:"🎄 Christmas Day",         date:"2026-12-25", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"" },
-      { id:"h120", title:"🎆 New Years Eve",         date:"2026-12-31", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"🥂" },
+      { id:"e101", title:"🎂 My Birthday",           date:"2026-01-06", category:"birthday",    member:"Me",         recurring:"yearly",    notes:"",  allDay:true,  time:"" },
+      { id:"e102", title:"🎂 Sky's Birthday",        date:"2026-02-18", category:"birthday",    member:"Sky",        recurring:"yearly",    notes:"Born 1993", allDay:true, time:"" },
+      { id:"e201", title:"💊 Noodles Medicine",      date:"2026-03-22", category:"vet",         member:"Dogs",       recurring:"monthly",   notes:"Monthly medicine for Noodles", allDay:true, time:"" },
+      { id:"e202", title:"💊 Tyde Medicine",         date:"2026-03-15", category:"vet",         member:"Dogs",       recurring:"monthly",   notes:"Monthly medicine for Tyde", allDay:true, time:"" },
+      { id:"e203", title:"💊 Iko Medicine",          date:"2026-03-15", category:"vet",         member:"Dogs",       recurring:"monthly",   notes:"Monthly medicine for Iko", allDay:true, time:"" },
+      { id:"e204", title:"💊 Peanut Medicine",       date:"2026-03-03", category:"vet",         member:"Cat",        recurring:"bimonthly", notes:"Every other month", allDay:true, time:"" },
+      { id:"e301", title:"🧠 Therapy",               date:"2026-03-13", category:"appointment", member:"Me",         recurring:"biweekly",  notes:"Every other Friday", allDay:false, time:"" },
+      { id:"e501", title:"🏠 Work From Home",        date:"2026-03-12", category:"wfh",         member:"Me",         recurring:"weekly",    notes:"Every Thursday", allDay:true, time:"" },
+      { id:"e601", title:"🐕 Dog Sitting — Blue",   date:"2026-03-08", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 1 of 4", allDay:true, time:"" },
+      { id:"e602", title:"🐕 Dog Sitting — Blue",   date:"2026-03-09", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 2 of 4", allDay:true, time:"" },
+      { id:"e603", title:"🐕 Dog Sitting — Blue",   date:"2026-03-10", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 3 of 4", allDay:true, time:"" },
+      { id:"e604", title:"🐕 Dog Sitting — Blue",   date:"2026-03-11", category:"vet",         member:"Both of Us", recurring:"none",      notes:"Day 4 of 4", allDay:true, time:"" },
+      { id:"e605", title:"🐕 Dog Sitting — Blue (2nd Stay)", date:"2026-03-25", category:"vet", member:"Both of Us", recurring:"none", notes:"Edit dates once confirmed", allDay:true, time:"" },
+      { id:"e401", title:"🎤 Ashley Gavin Comedy",  date:"2026-03-20", category:"date",        member:"Both of Us", recurring:"none",      notes:"Cap City Comedy Club, Austin TX · 2 tickets", allDay:false, time:"21:15" },
+      { id:"e402", title:"🎤 Amber Autry Comedy",   date:"2026-06-06", category:"date",        member:"Both of Us", recurring:"none",      notes:"🎭", allDay:false, time:"19:00" },
+      { id:"h101", title:"🇺🇸 New Years Day",        date:"2026-01-01", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h102", title:"🇺🇸 MLK Day",             date:"2026-01-19", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h103", title:"❤️ Valentines Day",        date:"2026-02-14", category:"date",        member:"Both of Us", recurring:"none",      notes:"Plan something special! 💕", allDay:true, time:"" },
+      { id:"h104", title:"🇺🇸 Presidents Day",       date:"2026-02-16", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h105", title:"☘️ St Patricks Day",       date:"2026-03-17", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h106", title:"🌸 Spring First Day",      date:"2026-03-20", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h107", title:"🐣 Easter",                date:"2026-04-05", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h108", title:"👩 Mothers Day",           date:"2026-05-10", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h109", title:"🇺🇸 Memorial Day",         date:"2026-05-25", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h110", title:"👨 Fathers Day",           date:"2026-06-21", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h111", title:"☀️ Summer First Day",      date:"2026-06-21", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h112", title:"🇺🇸 Independence Day",     date:"2026-07-04", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h113", title:"🇺🇸 Labor Day",            date:"2026-09-07", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h114", title:"🍂 Fall First Day",        date:"2026-09-23", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h115", title:"🎃 Halloween",             date:"2026-10-31", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h116", title:"🇺🇸 Veterans Day",         date:"2026-11-11", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h117", title:"🦃 Thanksgiving",          date:"2026-11-26", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h118", title:"🎄 Christmas Eve",         date:"2026-12-24", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h119", title:"🎄 Christmas Day",         date:"2026-12-25", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"", allDay:true, time:"" },
+      { id:"h120", title:"🎆 New Years Eve",         date:"2026-12-31", category:"holiday",     member:"Both of Us", recurring:"none",      notes:"🥂", allDay:true, time:"" },
     ];
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
     const CAT_MAP = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
     const NC_MAP  = Object.fromEntries(NOTE_CATS.map(c=>[c.id,c]));
     const DAYS    = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -434,6 +263,7 @@ input, select, textarea { font-family: inherit; }
     function dim(y,m)      { return new Date(y,m+1,0).getDate(); }
     function fd(y,m)       { return new Date(y,m,1).getDay(); }
     function esc(s)        { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    function fmt12(t)      { if(!t)return""; const [h,m]=t.split(":"); const hr=+h; return `${hr===0?12:hr>12?hr-12:hr}:${m} ${hr<12?"AM":"PM"}`; }
     const TODAY = toDS(new Date());
 
     function recurs(e,ds) {
@@ -447,14 +277,14 @@ input, select, textarea { font-family: inherit; }
       return false;
     }
 
-    // ── State ─────────────────────────────────────────────────────────────────
     let S = {
       events:[],notes:[],view:"month",
       yr:new Date().getFullYear(),mo:new Date().getMonth(),wk:wkOf(TODAY),
       sel:null,fCat:"all",fMem:"all",nFilt:"all",
-      modal:null,editEv:null,
-      form:{title:"",date:TODAY,category:"errand",member:"Both of Us",recurring:"none",notes:""},
+      modal:null,editEv:null,showJump:false,
+      form:{title:"",date:TODAY,category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:""},
       nText:"",nFor:"Both of Us",nCat:"general",synced:false,
+      jumpMo:new Date().getMonth(), jumpYr:new Date().getFullYear(),
     };
 
     function getEvs(ds) {
@@ -464,6 +294,10 @@ input, select, textarea { font-family: inherit; }
         if(e.date===ds)return true;
         if(e.recurring==="none")return false;
         return recurs(e,ds);
+      }).sort((a,b)=>{
+        if(a.allDay&&!b.allDay)return -1;
+        if(!a.allDay&&b.allDay)return 1;
+        return (a.time||"").localeCompare(b.time||"");
       });
     }
 
@@ -473,7 +307,6 @@ input, select, textarea { font-family: inherit; }
     function deleteNote(id)  { remove(ref(db,`notes/${id}`)); }
     function patchNote(id,ch){ update(ref(db,`notes/${id}`),ch); }
 
-    // ── Firebase init ─────────────────────────────────────────────────────────
     onValue(ref(db,"events"),snap=>{
       const val=snap.val();
       if(!val){const obj={};SEED_EVENTS.forEach(e=>{obj[e.id]=e;});set(ref(db,"events"),obj);}
@@ -486,7 +319,11 @@ input, select, textarea { font-family: inherit; }
       render();
     });
 
-    // ── Render ────────────────────────────────────────────────────────────────
+    function pillLabel(ev) {
+      const time = !ev.allDay && ev.time ? fmt12(ev.time)+" " : "";
+      return time + ev.title;
+    }
+
     function render() {
       const app=document.getElementById("app");
       if(!S.synced){app.innerHTML=`<div class="loading"><div class="loading-icon">🏡</div><div class="loading-text">Connecting to Firebase…</div></div>`;return;}
@@ -496,7 +333,11 @@ input, select, textarea { font-family: inherit; }
       const activeNotes=S.notes.filter(n=>!n.done).length;
       const visNotes=S.notes.filter(n=>nFilt==="all"||(nFilt==="active"&&!n.done)||(nFilt==="done"&&n.done));
       const navLabel=view==="week"?(()=>{const s=new Date(wk+"T12:00:00"),e=new Date(addDays(wk,6)+"T12:00:00");return`${MONTHS[s.getMonth()].slice(0,3)} ${s.getDate()} – ${MONTHS[e.getMonth()].slice(0,3)} ${e.getDate()}, ${e.getFullYear()}`;})():`${MONTHS[mo]} ${yr}`;
-      const listEvs=(()=>{const out=[];for(let d=1;d<=dIM;d++){const ds=`${yr}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;getEvs(ds).forEach(e=>out.push({...e,displayDate:ds}));}return out.sort((a,b)=>a.displayDate.localeCompare(b.displayDate));})();
+      const listEvs=(()=>{const out=[];for(let d=1;d<=dIM;d++){const ds=`${yr}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;getEvs(ds).forEach(e=>out.push({...e,displayDate:ds}));}return out.sort((a,b)=>a.displayDate.localeCompare(b.displayDate)||(a.time||"").localeCompare(b.time||""));})();
+
+      // Year options for jump picker
+      const yearOpts = Array.from({length:5},(_,i)=>2024+i).map(y=>`<option value="${y}"${S.jumpYr===y?" selected":""}>${y}</option>`).join("");
+      const moOpts   = MONTHS.map((m,i)=>`<option value="${i}"${S.jumpMo===i?" selected":""}>${m}</option>`).join("");
 
       app.innerHTML=`
         <header class="header">
@@ -520,7 +361,19 @@ input, select, textarea { font-family: inherit; }
         </div>
         <div class="cal-nav">
           <button class="nav-btn" id="btnPrev">‹</button>
-          <div class="nav-center"><span class="nav-label">${navLabel}</span><button class="btn-today" id="btnToday">Today</button></div>
+          <div class="nav-center">
+            ${S.showJump ? `
+              <div class="jump-picker">
+                <select id="jumpMo">${moOpts}</select>
+                <select id="jumpYr">${yearOpts}</select>
+                <button class="jump-go" id="btnJumpGo">Go</button>
+                <button class="jump-cancel" id="btnJumpCancel">✕</button>
+              </div>
+            ` : `
+              <span class="nav-label" id="btnJumpOpen" title="Click to jump to a month">${navLabel} ▾</span>
+              <button class="btn-today" id="btnToday">Today</button>
+            `}
+          </div>
           <button class="nav-btn" id="btnNext">›</button>
         </div>
         ${view==="month"?`
@@ -531,7 +384,7 @@ input, select, textarea { font-family: inherit; }
             ${Array.from({length:dIM}).map((_,i)=>{
               const day=i+1,ds=`${yr}-${String(mo+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
               const evs=getEvs(ds),isT=ds===TODAY,isA=sel===ds;
-              return`<div class="day-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="day-num">${day}</div>${evs.slice(0,3).map(ev=>`<div class="ev-pill" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(ev.title)}</div>`).join("")}${evs.length>3?`<div class="ev-more">+${evs.length-3} more</div>`:""}</div>`;
+              return`<div class="day-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="day-num">${day}</div>${evs.slice(0,3).map(ev=>`<div class="ev-pill" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev))}</div>`).join("")}${evs.length>3?`<div class="ev-more">+${evs.length-3} more</div>`:""}</div>`;
             }).join("")}
           </div>
           ${sel?dayPanel(sel):""}
@@ -541,7 +394,7 @@ input, select, textarea { font-family: inherit; }
           <div class="week-grid">
             ${wkDays.map(ds=>{
               const evs=getEvs(ds),d=new Date(ds+"T12:00:00"),isT=ds===TODAY,isA=sel===ds;
-              return`<div class="week-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="week-cell-hdr"><div class="week-day-name">${DAYS[d.getDay()]}</div><div class="week-day-num">${d.getDate()}</div><div class="week-month">${MONTHS[d.getMonth()].slice(0,3)}</div></div>${evs.length===0?`<div class="week-empty">—</div>`:""}${evs.slice(0,5).map(ev=>`<div class="ev-pill" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(ev.title)}</div>`).join("")}${evs.length>5?`<div class="ev-more">+${evs.length-5}</div>`:""}<button class="week-add-btn" data-ds="${ds}">+ add</button></div>`;
+              return`<div class="week-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="week-cell-hdr"><div class="week-day-name">${DAYS[d.getDay()]}</div><div class="week-day-num">${d.getDate()}</div><div class="week-month">${MONTHS[d.getMonth()].slice(0,3)}</div></div>${evs.length===0?`<div class="week-empty">—</div>`:""}${evs.slice(0,5).map(ev=>`<div class="ev-pill" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev))}</div>`).join("")}${evs.length>5?`<div class="ev-more">+${evs.length-5}</div>`:""}<button class="week-add-btn" data-ds="${ds}">+ add</button></div>`;
             }).join("")}
           </div>
           ${sel?dayPanel(sel):""}
@@ -589,12 +442,38 @@ input, select, textarea { font-family: inherit; }
 
     function evCard(ev){
       const c=CAT_MAP[ev.category]||CAT_MAP.other;
-      return`<div class="ev-card" style="background:${c.bg};border-left:4px solid ${c.color}" data-id="${ev.id}"><div class="ev-card-body"><div class="ev-card-title">${esc(ev.title)}</div><div class="ev-card-meta">${esc(c.label)} · ${esc(ev.member)}${ev.recurring!=="none"?` · 🔁 ${esc(RECUR_LABELS[ev.recurring]||ev.recurring)}`:""}</div>${ev.notes?`<div class="ev-card-notes">${esc(ev.notes)}</div>`:""}</div><span class="ev-edit-badge" style="color:${c.color};background:${c.color}22">Edit</span></div>`;
+      const timeStr = !ev.allDay && ev.time ? `<span style="color:${c.color};font-weight:700">⏰ ${fmt12(ev.time)}</span> · ` : `<span style="background:${c.color}22;color:${c.color};border-radius:4px;padding:1px 6px;font-size:10px">All day</span> · `;
+      return`<div class="ev-card" style="background:${c.bg};border-left:4px solid ${c.color}" data-id="${ev.id}"><div class="ev-card-body"><div class="ev-card-title">${esc(ev.title)}</div><div class="ev-card-meta">${timeStr}${esc(c.label)} · ${esc(ev.member)}${ev.recurring!=="none"?` · 🔁 ${esc(RECUR_LABELS[ev.recurring]||ev.recurring)}`:""}</div>${ev.notes?`<div class="ev-card-notes">${esc(ev.notes)}</div>`:""}</div><span class="ev-edit-badge" style="color:${c.color};background:${c.color}22">Edit</span></div>`;
     }
 
     function modalHTML(){
       const {form,editEv}=S;
-      return`<div class="modal-overlay" id="modalOverlay"><div class="modal"><div class="modal-title">${editEv?"Edit Event":"New Event"}</div><label class="modal-lbl">Title</label><input class="modal-inp" id="mTitle" value="${esc(form.title)}" placeholder="Event name…"/><label class="modal-lbl">Date</label><input class="modal-inp" id="mDate" type="date" value="${form.date}"/><label class="modal-lbl">Category</label><select class="modal-inp" id="mCat">${CATEGORIES.map(c=>`<option value="${c.id}"${form.category===c.id?" selected":""}>${esc(c.label)}</option>`).join("")}</select><label class="modal-lbl">Who</label><select class="modal-inp" id="mMem">${MEMBERS.map(m=>`<option value="${esc(m)}"${form.member===m?" selected":""}>${esc(m)}</option>`).join("")}</select><label class="modal-lbl">Recurring</label><select class="modal-inp" id="mRec">${Object.entries(RECUR_LABELS).map(([v,l])=>`<option value="${v}"${form.recurring===v?" selected":""}>${l}</option>`).join("")}</select><label class="modal-lbl">Notes</label><textarea class="modal-inp modal-ta" id="mNotes">${esc(form.notes)}</textarea><div class="modal-btns"><button class="modal-save" id="btnSave">${editEv?"Save Changes":"Add Event"}</button><button class="modal-cancel" id="btnCancel">Cancel</button>${editEv?`<button class="modal-delete" id="btnDelete">🗑</button>`:""}</div></div></div>`;
+      return`<div class="modal-overlay" id="modalOverlay"><div class="modal">
+        <div class="modal-title">${editEv?"Edit Event":"New Event"}</div>
+        <label class="modal-lbl">Title</label>
+        <input class="modal-inp" id="mTitle" value="${esc(form.title)}" placeholder="Event name…"/>
+        <label class="modal-lbl">Date</label>
+        <input class="modal-inp" id="mDate" type="date" value="${form.date}"/>
+        <label class="modal-lbl">Timing</label>
+        <div class="time-toggle">
+          <button class="time-toggle-btn${form.allDay?" active":""}" id="btnAllDay">☀️ All Day</button>
+          <button class="time-toggle-btn${!form.allDay?" active":""}" id="btnTimed">⏰ Specific Time</button>
+        </div>
+        ${!form.allDay?`<div class="time-row"><input type="time" id="mTime" value="${esc(form.time)}" /></div>`:""}
+        <label class="modal-lbl">Category</label>
+        <select class="modal-inp" id="mCat">${CATEGORIES.map(c=>`<option value="${c.id}"${form.category===c.id?" selected":""}>${esc(c.label)}</option>`).join("")}</select>
+        <label class="modal-lbl">Who</label>
+        <select class="modal-inp" id="mMem">${MEMBERS.map(m=>`<option value="${esc(m)}"${form.member===m?" selected":""}>${esc(m)}</option>`).join("")}</select>
+        <label class="modal-lbl">Recurring</label>
+        <select class="modal-inp" id="mRec">${Object.entries(RECUR_LABELS).map(([v,l])=>`<option value="${v}"${form.recurring===v?" selected":""}>${l}</option>`).join("")}</select>
+        <label class="modal-lbl">Notes</label>
+        <textarea class="modal-inp modal-ta" id="mNotes">${esc(form.notes)}</textarea>
+        <div class="modal-btns">
+          <button class="modal-save" id="btnSave">${editEv?"Save Changes":"Add Event"}</button>
+          <button class="modal-cancel" id="btnCancel">Cancel</button>
+          ${editEv?`<button class="modal-delete" id="btnDelete">🗑</button>`:""}
+        </div>
+      </div></div>`;
     }
 
     function bind(){
@@ -602,16 +481,32 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{S.view=b.dataset.view;S.sel=null;render();}));
       $("fCat")?.addEventListener("change",e=>{S.fCat=e.target.value;render();});
       $("fMem")?.addEventListener("change",e=>{S.fMem=e.target.value;render();});
-      $("btnPrev")?.addEventListener("click",()=>{if(S.view==="week")S.wk=addDays(S.wk,-7);else if(S.mo===0){S.mo=11;S.yr--;}else S.mo--;render();});
-      $("btnNext")?.addEventListener("click",()=>{if(S.view==="week")S.wk=addDays(S.wk,7);else if(S.mo===11){S.mo=0;S.yr++;}else S.mo++;render();});
-      $("btnToday")?.addEventListener("click",()=>{S.yr=new Date().getFullYear();S.mo=new Date().getMonth();S.wk=wkOf(TODAY);render();});
+      $("btnPrev")?.addEventListener("click",()=>{S.showJump=false;if(S.view==="week")S.wk=addDays(S.wk,-7);else if(S.mo===0){S.mo=11;S.yr--;}else S.mo--;render();});
+      $("btnNext")?.addEventListener("click",()=>{S.showJump=false;if(S.view==="week")S.wk=addDays(S.wk,7);else if(S.mo===11){S.mo=0;S.yr++;}else S.mo++;render();});
+      $("btnToday")?.addEventListener("click",()=>{S.yr=new Date().getFullYear();S.mo=new Date().getMonth();S.wk=wkOf(TODAY);S.showJump=false;render();});
+      // Jump picker
+      $("btnJumpOpen")?.addEventListener("click",()=>{S.showJump=true;S.jumpMo=S.mo;S.jumpYr=S.yr;render();});
+      $("btnJumpCancel")?.addEventListener("click",()=>{S.showJump=false;render();});
+      $("jumpMo")?.addEventListener("change",e=>{S.jumpMo=+e.target.value;});
+      $("jumpYr")?.addEventListener("change",e=>{S.jumpYr=+e.target.value;});
+      $("btnJumpGo")?.addEventListener("click",()=>{S.mo=S.jumpMo;S.yr=S.jumpYr;S.wk=wkOf(`${S.yr}-${String(S.mo+1).padStart(2,"0")}-01`);S.showJump=false;S.sel=null;render();});
       $("btnAdd")?.addEventListener("click",()=>openAdd(TODAY));
       document.querySelectorAll(".day-cell:not(.empty)").forEach(c=>c.addEventListener("click",e=>{if(e.target.classList.contains("ev-pill"))return;const ds=c.dataset.ds;S.sel=S.sel===ds?null:ds;render();}));
       document.querySelectorAll(".week-cell").forEach(c=>c.addEventListener("click",e=>{if(e.target.classList.contains("ev-pill")||e.target.classList.contains("week-add-btn"))return;const ds=c.dataset.ds;S.sel=S.sel===ds?null:ds;render();}));
       document.querySelectorAll(".week-add-btn").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();openAdd(b.dataset.ds);}));
       document.querySelectorAll("[data-addds]").forEach(b=>b.addEventListener("click",()=>openAdd(b.dataset.addds)));
-      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.form={...ev};S.modal="edit";render();}}));
-      $("btnSave")?.addEventListener("click",()=>{const title=$("mTitle").value.trim(),date=$("mDate").value;if(!title||!date)return;const ev={...S.form,title,date,category:$("mCat").value,member:$("mMem").value,recurring:$("mRec").value,notes:$("mNotes").value,id:S.editEv?S.editEv.id:"e_"+Date.now()};saveEvent(ev);S.modal=null;S.editEv=null;render();});
+      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||""};S.modal="edit";render();}}));
+      // Time toggle in modal
+      $("btnAllDay")?.addEventListener("click",()=>{S.form={...S.form,allDay:true,time:""};render();});
+      $("btnTimed")?.addEventListener("click",()=>{S.form={...S.form,allDay:false};render();});
+      $("btnSave")?.addEventListener("click",()=>{
+        const title=$("mTitle").value.trim(),date=$("mDate").value;
+        if(!title||!date)return;
+        const allDay=S.form.allDay;
+        const time=allDay?"":(($("mTime")?.value)||"");
+        const ev={...S.form,title,date,allDay,time,category:$("mCat").value,member:$("mMem").value,recurring:$("mRec").value,notes:$("mNotes").value,id:S.editEv?S.editEv.id:"e_"+Date.now()};
+        saveEvent(ev);S.modal=null;S.editEv=null;render();
+      });
       $("btnCancel")?.addEventListener("click",()=>{S.modal=null;render();});
       $("btnDelete")?.addEventListener("click",()=>{if(S.editEv){deleteEvent(S.editEv.id);S.modal=null;S.editEv=null;render();}});
       $("modalOverlay")?.addEventListener("click",e=>{if(e.target.id==="modalOverlay"){S.modal=null;render();}});
@@ -626,7 +521,7 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".note-del-btn").forEach(b=>b.addEventListener("click",()=>deleteNote(b.dataset.nid)));
     }
 
-    function openAdd(ds){S.editEv=null;S.form={title:"",date:ds||TODAY,category:"errand",member:"Both of Us",recurring:"none",notes:""};S.modal="add";render();}
+    function openAdd(ds){S.editEv=null;S.form={title:"",date:ds||TODAY,category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:""};S.modal="add";render();}
     function addNote(){
       const ni=document.getElementById("noteInput");
       const text=(ni?.value||S.nText).trim();
