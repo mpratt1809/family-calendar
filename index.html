@@ -13,7 +13,9 @@ input, select, textarea { font-family: inherit; }
 .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 14px; }
 .loading-icon { font-size: 42px; }
 .loading-text { font-size: 15px; color: #94a3b8; }
-.header { background: #1a1a2e; padding: 18px 24px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.back-link { display: inline-flex; align-items: center; gap: 4px; color: #64748b; text-decoration: none; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; margin-bottom: 6px; transition: color 0.2s; }
+.back-link:hover { color: #ffaa64; }
+.header { background: #1a1a2e; padding: 14px 24px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 .header-sub { color: #e8d5b7; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3px; }
 .header-title { color: #fff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; font-family: 'Playfair Display', Georgia, serif; }
 .header-members { color: #64748b; font-size: 11px; margin-top: 3px; }
@@ -36,7 +38,6 @@ input, select, textarea { font-family: inherit; }
 .nav-label:hover { color: #c9a96e; }
 .btn-today { font-size: 10px; color: #94a3b8; background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 9px; }
 .btn-today:hover { background: #f1f5f9; }
-/* Jump picker */
 .jump-picker { display: flex; gap: 8px; align-items: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
 .jump-picker select { border: 1px solid #e2e8f0; border-radius: 7px; padding: 5px 8px; font-size: 13px; background: #fafafa; outline: none; }
 .jump-picker select:focus { border-color: #c9a96e; }
@@ -149,7 +150,6 @@ input, select, textarea { font-family: inherit; }
 .modal-save:hover { opacity: 0.88; }
 .modal-cancel { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; border-radius: 9px; padding: 11px 13px; font-size: 13px; }
 .modal-delete { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; border-radius: 9px; padding: 11px 12px; font-size: 13px; }
-/* Time toggle */
 .time-toggle { display: flex; gap: 8px; margin-top: 4px; }
 .time-toggle-btn { flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; background: #fafafa; color: #64748b; transition: all 0.15s; }
 .time-toggle-btn.active { background: #1a1a2e; color: #e8d5b7; border-color: #1a1a2e; font-weight: 700; }
@@ -157,7 +157,7 @@ input, select, textarea { font-family: inherit; }
 .time-row input[type=time] { flex: 1; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 12px; font-size: 13px; background: #fafafa; outline: none; }
 .time-row input[type=time]:focus { border-color: #c9a96e; }
 @media (max-width: 640px) {
-  .header { padding: 14px 16px; }
+  .header { padding: 12px 16px; }
   .header-title { font-size: 20px; }
   .cal-nav { padding: 10px 16px 4px; }
   .nav-label { font-size: 16px; }
@@ -173,34 +173,6 @@ input, select, textarea { font-family: inherit; }
   </style>
 </head>
 <body>
-  <!-- PrattHub back link — paste right after <body> -->
-<a href="https://mpratt1809.github.io/hub/" id="pratthub-back"
-   style="
-     position: fixed;
-     top: 12px;
-     left: 14px;
-     z-index: 99999;
-     display: inline-flex;
-     align-items: center;
-     gap: 6px;
-     padding: 6px 14px 6px 10px;
-     background: rgba(10, 10, 15, 0.75);
-     backdrop-filter: blur(12px);
-     -webkit-backdrop-filter: blur(12px);
-     border: 1px solid rgba(255, 255, 255, 0.08);
-     border-radius: 10px;
-     color: rgba(255, 255, 255, 0.55);
-     text-decoration: none;
-     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-     font-size: 12px;
-     font-weight: 600;
-     letter-spacing: 0.5px;
-     transition: all 0.25s ease;
-   "
-   onmouseenter="this.style.background='rgba(10,10,15,0.9)';this.style.color='rgba(255,255,255,0.85)';this.style.borderColor='rgba(255,255,255,0.15)'"
-   onmouseleave="this.style.background='rgba(10,10,15,0.75)';this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.08)'"
->← PrattHub</a>
-<!-- End PrattHub back link -->
   <div id="app">
     <div class="loading">
       <div class="loading-icon">🏡</div>
@@ -363,13 +335,13 @@ input, select, textarea { font-family: inherit; }
       const navLabel=view==="week"?(()=>{const s=new Date(wk+"T12:00:00"),e=new Date(addDays(wk,6)+"T12:00:00");return`${MONTHS[s.getMonth()].slice(0,3)} ${s.getDate()} – ${MONTHS[e.getMonth()].slice(0,3)} ${e.getDate()}, ${e.getFullYear()}`;})():`${MONTHS[mo]} ${yr}`;
       const listEvs=(()=>{const out=[];for(let d=1;d<=dIM;d++){const ds=`${yr}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;getEvs(ds).forEach(e=>out.push({...e,displayDate:ds}));}return out.sort((a,b)=>a.displayDate.localeCompare(b.displayDate)||(a.time||"").localeCompare(b.time||""));})();
 
-      // Year options for jump picker
       const yearOpts = Array.from({length:5},(_,i)=>2024+i).map(y=>`<option value="${y}"${S.jumpYr===y?" selected":""}>${y}</option>`).join("");
       const moOpts   = MONTHS.map((m,i)=>`<option value="${i}"${S.jumpMo===i?" selected":""}>${m}</option>`).join("");
 
       app.innerHTML=`
         <header class="header">
           <div class="header-left">
+            <a href="https://mpratt1809.github.io/hub/" class="back-link">← PRATTHUB</a>
             <div class="header-sub">Home &amp; Household</div>
             <div class="header-title">Our Calendar 🏡</div>
             <div class="header-members">Me · Sky · Tyde 🐶 · Iko 🐶 · Noodles 🐶 · Peanut 🐱</div>
@@ -512,7 +484,6 @@ input, select, textarea { font-family: inherit; }
       $("btnPrev")?.addEventListener("click",()=>{S.showJump=false;if(S.view==="week")S.wk=addDays(S.wk,-7);else if(S.mo===0){S.mo=11;S.yr--;}else S.mo--;render();});
       $("btnNext")?.addEventListener("click",()=>{S.showJump=false;if(S.view==="week")S.wk=addDays(S.wk,7);else if(S.mo===11){S.mo=0;S.yr++;}else S.mo++;render();});
       $("btnToday")?.addEventListener("click",()=>{S.yr=new Date().getFullYear();S.mo=new Date().getMonth();S.wk=wkOf(TODAY);S.showJump=false;render();});
-      // Jump picker
       $("btnJumpOpen")?.addEventListener("click",()=>{S.showJump=true;S.jumpMo=S.mo;S.jumpYr=S.yr;render();});
       $("btnJumpCancel")?.addEventListener("click",()=>{S.showJump=false;render();});
       $("jumpMo")?.addEventListener("change",e=>{S.jumpMo=+e.target.value;});
@@ -524,7 +495,6 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".week-add-btn").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();openAdd(b.dataset.ds);}));
       document.querySelectorAll("[data-addds]").forEach(b=>b.addEventListener("click",()=>openAdd(b.dataset.addds)));
       document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||""};S.modal="edit";render();}}));
-      // Time toggle in modal
       $("btnAllDay")?.addEventListener("click",()=>{S.form={...S.form,allDay:true,time:""};render();});
       $("btnTimed")?.addEventListener("click",()=>{S.form={...S.form,allDay:false};render();});
       $("btnSave")?.addEventListener("click",()=>{
