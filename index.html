@@ -173,6 +173,34 @@ input, select, textarea { font-family: inherit; }
   </style>
 </head>
 <body>
+  <!-- PrattHub back link — paste right after <body> -->
+<a href="https://mpratt1809.github.io/hub/" id="pratthub-back"
+   style="
+     position: fixed;
+     top: 12px;
+     left: 14px;
+     z-index: 99999;
+     display: inline-flex;
+     align-items: center;
+     gap: 6px;
+     padding: 6px 14px 6px 10px;
+     background: rgba(10, 10, 15, 0.75);
+     backdrop-filter: blur(12px);
+     -webkit-backdrop-filter: blur(12px);
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     border-radius: 10px;
+     color: rgba(255, 255, 255, 0.55);
+     text-decoration: none;
+     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+     font-size: 12px;
+     font-weight: 600;
+     letter-spacing: 0.5px;
+     transition: all 0.25s ease;
+   "
+   onmouseenter="this.style.background='rgba(10,10,15,0.9)';this.style.color='rgba(255,255,255,0.85)';this.style.borderColor='rgba(255,255,255,0.15)'"
+   onmouseleave="this.style.background='rgba(10,10,15,0.75)';this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.08)'"
+>← PrattHub</a>
+<!-- End PrattHub back link -->
   <div id="app">
     <div class="loading">
       <div class="loading-icon">🏡</div>
