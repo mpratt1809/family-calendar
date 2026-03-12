@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Family Calendar 🏡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header id="app-header">
+    <div class="header-left">
+      <div class="header-eyebrow">Home &amp; Household</div>
+      <h1>Our Calendar 🏡</h1>
+      <div class="header-sub">Me · Sky · Tyde 🐶 · Iko 🐶 · Noodles 🐶 · Peanut 🐱</div>
+    </div>
+    <div class="header-right">
+      <span id="sync-status" class="sync-status"></span>
+      <div class="view-tabs">
+        <button class="view-btn active" data-view="month">📅 Month</button>
+        <button class="view-btn" data-view="week">🗓 Week</button>
+        <button class="view-btn" data-view="list">📋 List</button>
+      </div>
+      <button id="add-event-btn" class="btn-gold">+ Add Event</button>
+    </div>
+  </header>
+
+  <div class="sync-banner">
+    🔗 Shared calendar — changes by you or Sky sync in real time via Firebase.
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">FILTER</span>
+    <select id="filter-cat">
+      <option value="all">All categories</option>
+      <option value="birthday">🎂 Birthday</option>
+      <option value="appointment">🏥 Appointment</option>
+      <option value="vet">🐾 Vet / Pet Care</option>
+      <option value="wfh">🏠 Work From Home</option>
+      <option value="errand">🛒 Errand / Task</option>
+      <option value="holiday">🌴 Holiday</option>
+      <option value="date">💛 Date Night</option>
+      <option value="other">📌 Other</option>
+    </select>
+    <select id="filter-member">
+      <option value="all">Everyone</option>
+      <option value="Both of Us">Both of Us</option>
+      <option value="Me">Me</option>
+      <option value="Sky">Sky</option>
+      <option value="All Pets">All Pets</option>
+      <option value="Dogs">Dogs</option>
+      <option value="Cat">Cat</option>
+    </select>
+  </div>
+
+  <div class="cal-nav">
+    <button id="prev-btn" class="nav-btn">&#8249;</button>
+    <div class="nav-center">
+      <span id="nav-label"></span>
+      <button id="today-btn" class="today-btn">Today</button>
+    </div>
+    <button id="next-btn" class="nav-btn">&#8250;</button>
+  </div>
+
+  <main id="cal-main">
+    <div id="view-month"></div>
+    <div id="view-week"  style="display:none"></div>
+    <div id="view-list"  style="display:none"></div>
+  </main>
+
+  <!-- NOTES -->
+  <section id="notes-section">
+    <div class="notes-header">
+      <div class="notes-title-row">
+        <span>📝</span>
+        <span class="notes-title">Notes &amp; Reminders</span>
+        <span id="notes-badge" class="notes-badge" style="display:none"></span>
+      </div>
+      <div class="notes-filter-tabs">
+        <button class="notes-tab active" data-nf="all">All</button>
+        <button class="notes-tab" data-nf="active">Active</button>
+        <button class="notes-tab" data-nf="done">Done</button>
+      </div>
+    </div>
+    <div class="notes-add">
+      <div class="notes-add-row">
+        <input id="note-input" type="text" placeholder='e.g. "Running low on dog food 🐶"' />
+        <button id="add-note-btn" class="btn-dark">+ Add Note</button>
+      </div>
+      <div class="notes-add-meta">
+        <select id="note-for">
+          <option value="Both of Us">👤 For: Both of Us</option>
+          <option value="Me">👤 For: Me</option>
+          <option value="Sky">👤 For: Sky</option>
+        </select>
+        <select id="note-cat">
+          <option value="general">💬 General</option>
+          <option value="shopping">🛒 Shopping</option>
+          <option value="pets">🐾 Pets</option>
+          <option value="home">🏠 Home</option>
+          <option value="reminder">⏰ Reminder</option>
+        </select>
+      </div>
+    </div>
+    <div id="notes-list"></div>
+  </section>
+
+  <div class="legend">
+    <div class="legend-pill" style="background:#fef2f2"><span class="legend-dot" style="background:#f87171"></span><span style="color:#f87171">🎂 Birthday</span></div>
+    <div class="legend-pill" style="background:#eff6ff"><span class="legend-dot" style="background:#60a5fa"></span><span style="color:#60a5fa">🏥 Appointment</span></div>
+    <div class="legend-pill" style="background:#fdf2f8"><span class="legend-dot" style="background:#f472b6"></span><span style="color:#f472b6">🐾 Vet / Pet Care</span></div>
+    <div class="legend-pill" style="background:#ecfdf5"><span class="legend-dot" style="background:#34d399"></span><span style="color:#34d399">🏠 Work From Home</span></div>
+    <div class="legend-pill" style="background:#fff7ed"><span class="legend-dot" style="background:#fb923c"></span><span style="color:#fb923c">🛒 Errand / Task</span></div>
+    <div class="legend-pill" style="background:#fefce8"><span class="legend-dot" style="background:#facc15"></span><span style="color:#facc15">🌴 Holiday</span></div>
+    <div class="legend-pill" style="background:#faf5ff"><span class="legend-dot" style="background:#c084fc"></span><span style="color:#c084fc">💛 Date Night</span></div>
+    <div class="legend-pill" style="background:#f8fafc"><span class="legend-dot" style="background:#94a3b8"></span><span style="color:#94a3b8">📌 Other</span></div>
+  </div>
+
+  <!-- EVENT MODAL -->
+  <div id="event-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h2 id="modal-title">New Event</h2>
+      <label>Title</label>
+      <input id="ev-title" type="text" placeholder="Event name…" />
+      <label>Date</label>
+      <input id="ev-date" type="date" />
+      <label>Category</label>
+      <select id="ev-cat">
+        <option value="birthday">🎂 Birthday</option>
+        <option value="appointment">🏥 Appointment</option>
+        <option value="vet">🐾 Vet / Pet Care</option>
+        <option value="wfh">🏠 Work From Home</option>
+        <option value="errand">🛒 Errand / Task</option>
+        <option value="holiday">🌴 Holiday</option>
+        <option value="date">💛 Date Night</option>
+        <option value="other">📌 Other</option>
+      </select>
+      <label>Who</label>
+      <select id="ev-member">
+        <option>Both of Us</option><option>Me</option><option>Sky</option>
+        <option>All Pets</option><option>Dogs</option><option>Cat</option>
+      </select>
+      <label>Recurring</label>
+      <select id="ev-recurring">
+        <option value="none">One-time</option>
+        <option value="weekly">Weekly</option>
+        <option value="biweekly">Every other week</option>
+        <option value="monthly">Monthly</option>
+        <option value="bimonthly">Every other month</option>
+        <option value="yearly">Yearly</option>
+      </select>
+      <label>Notes</label>
+      <textarea id="ev-notes" rows="2" placeholder="Optional notes…"></textarea>
+      <div class="modal-actions">
+        <button id="modal-save"   class="btn-dark">Save Event</button>
+        <button id="modal-cancel" class="btn-light">Cancel</button>
+        <button id="modal-delete" class="btn-danger" style="display:none">🗑 Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
