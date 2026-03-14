@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Our Family Calendar 🏡</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -15,17 +15,18 @@ input, select, textarea { font-family: inherit; }
 .loading-text { font-size: 15px; color: #94a3b8; }
 .back-link { display: inline-flex; align-items: center; gap: 4px; color: #64748b; text-decoration: none; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; margin-bottom: 6px; transition: color 0.2s; }
 .back-link:hover { color: #ffaa64; }
-.header { background: #1a1a2e; padding: 14px 24px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.header { background: #1a1a2e; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.header-top-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .header-sub { color: #e8d5b7; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3px; }
-.header-title { color: #fff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; font-family: 'Playfair Display', Georgia, serif; }
+.header-title { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; font-family: 'Playfair Display', Georgia, serif; }
 .header-members { color: #64748b; font-size: 11px; margin-top: 3px; }
-.header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.sync-badge { font-size: 11px; color: #4ade80; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.25); border-radius: 20px; padding: 3px 10px; font-weight: 600; }
-.view-tabs { display: flex; gap: 5px; }
-.tab-btn { background: rgba(255,255,255,0.08); color: #e8d5b7; border: 1px solid rgba(232,213,183,0.25); border-radius: 8px; padding: 6px 13px; font-size: 12px; font-weight: 400; transition: all 0.15s; }
+.header-bottom-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sync-badge { font-size: 11px; color: #4ade80; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.25); border-radius: 20px; padding: 3px 10px; font-weight: 600; white-space: nowrap; }
+.view-tabs { display: flex; gap: 4px; flex: 1; }
+.tab-btn { background: rgba(255,255,255,0.08); color: #e8d5b7; border: 1px solid rgba(232,213,183,0.25); border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 400; transition: all 0.15s; white-space: nowrap; }
 .tab-btn.active { background: #e8d5b7; color: #1a1a2e; font-weight: 700; }
 .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.14); }
-.btn-add { background: #c9a96e; color: #1a1a2e; border: none; border-radius: 8px; padding: 7px 16px; font-size: 12px; font-weight: 700; transition: opacity 0.15s; }
+.btn-add { background: #c9a96e; color: #1a1a2e; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; transition: opacity 0.15s; white-space: nowrap; }
 .btn-add:hover { opacity: 0.88; }
 .filter-bar { background: #16213e; padding: 8px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .filter-label { color: #475569; font-size: 10px; letter-spacing: 2px; }
@@ -43,10 +44,10 @@ input, select, textarea { font-family: inherit; }
 .jump-picker select:focus { border-color: #c9a96e; }
 .jump-go { background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 7px; padding: 6px 14px; font-size: 12px; font-weight: 700; }
 .jump-cancel { background: none; border: none; font-size: 18px; color: #94a3b8; padding: 0 4px; }
-.month-wrap { padding: 4px 16px 20px; }
-.day-headers { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 3px; }
-.day-hdr { text-align: center; font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 2px; padding: 5px 0; text-transform: uppercase; }
-.month-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.month-wrap { padding: 4px 8px 20px; overflow: hidden; }
+.day-headers { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 2px; margin-bottom: 2px; }
+.day-hdr { text-align: center; font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 1px; padding: 5px 0; text-transform: uppercase; }
+.month-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 2px; }
 .day-cell { min-height: 84px; border-radius: 10px; padding: 6px; cursor: pointer; transition: all 0.12s; background: #fff; border: 1px solid #ede9e3; }
 .day-cell.empty { background: transparent; border: none; cursor: default; }
 .day-cell.today { background: #1a1a2e; border-color: #1a1a2e; box-shadow: 0 2px 10px rgba(26,26,46,0.18); }
@@ -70,8 +71,8 @@ input, select, textarea { font-family: inherit; }
 .ev-card-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
 .ev-card-notes { font-size: 11px; color: #64748b; margin-top: 3px; }
 .ev-edit-badge { font-size: 10px; font-weight: 700; border-radius: 5px; padding: 2px 7px; white-space: nowrap; align-self: flex-start; flex-shrink: 0; margin-left: 8px; }
-.week-wrap { padding: 10px 16px 24px; }
-.week-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-bottom: 12px; }
+.week-wrap { padding: 10px 8px 24px; overflow: hidden; }
+.week-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 4px; margin-bottom: 12px; }
 .week-cell { border-radius: 12px; cursor: pointer; min-height: 140px; padding: 10px 8px; transition: all 0.12s; background: #fff; border: 1px solid #ede9e3; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
 .week-cell.today { background: #1a1a2e; border-color: #1a1a2e; box-shadow: 0 4px 16px rgba(26,26,46,0.15); }
 .week-cell.selected { background: #f0ebe3; border: 2px solid #c9a96e; }
@@ -162,18 +163,38 @@ input, select, textarea { font-family: inherit; }
 .day-view-num { font-size: 56px; font-weight: 700; line-height: 1; font-family: 'Playfair Display', Georgia, serif; color: #1a1a2e; }
 .day-view-month { font-size: 15px; color: #94a3b8; margin-top: 6px; }
 @media (max-width: 640px) {
-  .header { padding: 12px 16px; }
-  .header-title { font-size: 20px; }
-  .cal-nav { padding: 10px 16px 4px; }
-  .nav-label { font-size: 16px; }
-  .month-wrap, .week-wrap, .list-wrap { padding-left: 10px; padding-right: 10px; }
-  .day-cell { min-height: 60px; padding: 4px; }
-  .day-num { font-size: 10px; }
-  .week-grid { grid-template-columns: repeat(7,1fr); gap: 3px; }
-  .week-cell { min-height: 90px; padding: 6px 4px; }
-  .week-day-num { font-size: 16px; }
-  .notes-section { margin-left: 10px; margin-right: 10px; }
-  .legend { padding-left: 12px; }
+  html, body { width: 100%; overflow-x: hidden; }
+  #app { width: 100%; overflow-x: hidden; }
+  .header { padding: 10px 12px; }
+  .header-title { font-size: 18px; }
+  .header-members { display: none; }
+  .tab-btn { padding: 5px 7px; font-size: 10px; }
+  .btn-add { padding: 6px 10px; font-size: 11px; }
+  .filter-bar { padding: 6px 12px; }
+  .cal-nav { padding: 8px 12px 4px; }
+  .nav-label { font-size: 15px; }
+  .nav-btn { width: 30px; height: 30px; font-size: 16px; }
+  .month-wrap, .list-wrap { padding-left: 4px; padding-right: 4px; }
+  .day-hdr { font-size: 8px; letter-spacing: 0; padding: 3px 0; }
+  .day-cell { min-height: 52px; padding: 3px 2px; border-radius: 6px; }
+  .day-num { font-size: 9px; margin-bottom: 2px; }
+  .ev-pill { font-size: 7px; padding: 1px 3px; margin-bottom: 1px; border-radius: 3px; }
+  .ev-more { font-size: 7px; }
+  .day-panel { padding: 12px 14px; border-radius: 10px; }
+  .week-wrap { padding-left: 4px; padding-right: 4px; }
+  .week-cell { min-height: 80px; padding: 5px 3px; border-radius: 8px; }
+  .week-day-name { font-size: 7px; letter-spacing: 0; }
+  .week-day-num { font-size: 14px; }
+  .week-month { font-size: 7px; }
+  .notes-section { margin-left: 8px; margin-right: 8px; }
+  .legend { padding: 0 10px 20px; gap: 4px; }
+  .legend-item span { font-size: 9px; }
+}
+@media (max-width: 420px) {
+  .tab-btn { padding: 5px 5px; font-size: 9px; }
+  .day-hdr { font-size: 7px; }
+  .ev-pill { font-size: 6px; padding: 1px 2px; }
+  .day-cell { min-height: 44px; }
 }
   </style>
 </head>
@@ -345,14 +366,16 @@ input, select, textarea { font-family: inherit; }
 
       app.innerHTML=`
         <header class="header">
-          <div class="header-left">
-            <a href="https://mpratt1809.github.io/hub/" class="back-link">← PRATTHUB</a>
-            <div class="header-sub">Home &amp; Household</div>
-            <div class="header-title">Our Calendar 🏡</div>
-            <div class="header-members">Me · Sky · Tyde 🐶 · Iko 🐶 · Noodles 🐶 · Peanut 🐱</div>
-          </div>
-          <div class="header-right">
+          <div class="header-top-row">
+            <div class="header-left">
+              <a href="https://mpratt1809.github.io/hub/" class="back-link">← PRATTHUB</a>
+              <div class="header-sub">Home &amp; Household</div>
+              <div class="header-title">Our Calendar 🏡</div>
+              <div class="header-members">Me · Sky · Tyde 🐶 · Iko 🐶 · Noodles 🐶 · Peanut 🐱</div>
+            </div>
             <span class="sync-badge">🔴 Live</span>
+          </div>
+          <div class="header-bottom-row">
             <div class="view-tabs">
               ${["day","month","week","list"].map(v=>`<button class="tab-btn${view===v?" active":""}" data-view="${v}">${v==="day"?"📆 Day":v==="month"?"📅 Month":v==="week"?"🗓 Week":"📋 List"}</button>`).join("")}
             </div>
