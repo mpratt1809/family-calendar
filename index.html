@@ -544,8 +544,7 @@ input, select, textarea { font-family: inherit; }
         <label class="modal-lbl">Title</label>
         <input class="modal-inp" id="mTitle" value="${esc(form.title)}" placeholder="Event name…"/>
         <label class="modal-lbl">Start Date</label>
-        <input class="modal-inp" id="mDate" type="date" value="${form.date}"
-          ${S.recurEditMode==="this"?'readonly style="opacity:0.6;background:#f8fafc"':""}/>
+        <input class="modal-inp" id="mDate" type="date" value="${form.date}"/>
         ${S.recurEditMode==="this"?"":`
         <label class="modal-lbl">End Date <span style="font-size:10px;color:#94a3b8">(optional — for multi-day events)</span></label>
         <input class="modal-inp" id="mEndDate" type="date" value="${form.endDate||""}"/>`}
@@ -636,16 +635,18 @@ input, select, textarea { font-family: inherit; }
         const location=$("mLocation")?.value||"";
 
         if(S.recurEditMode==="this" && S.editEv){
+          // The new date for this occurrence (may differ from original occurrence date)
+          const newDate = $("mDate").value || S.editOccurrenceDate;
           // Create a one-time exception event for this occurrence
           const exceptEv={
-            ...S.form,title,date:S.editOccurrenceDate,endDate:"",allDay,time,location,
+            ...S.form,title,date:newDate,endDate:"",allDay,time,location,
             category:$("mCat").value,member:$("mMem").value,
             notes:$("mNotes").value,
             recurring:"none",
             id:"e_exc_"+Date.now(),
             exceptionOf:S.editEv.id,
           };
-          // Add this date to the original event's exceptions array
+          // Add the ORIGINAL occurrence date to exceptions so it no longer shows
           const origExceptions=[...(S.editEv.exceptions||[]),S.editOccurrenceDate];
           update(ref(db,`events/${S.editEv.id}`),{exceptions:origExceptions});
           saveEvent(exceptEv);
