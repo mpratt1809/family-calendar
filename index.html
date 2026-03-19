@@ -444,7 +444,7 @@ input, select, textarea { font-family: inherit; }
               <span class="day-panel-title">${(()=>{const evs=getEvs(sel||TODAY);return evs.length+" event"+(evs.length!==1?"s":"");})()}</span>
               <button class="btn-add-sm" data-addds="${sel||TODAY}">+ Add</button>
             </div>
-            ${(()=>{const evs=getEvs(sel||TODAY);return evs.length===0?`<div class="day-panel-empty">Nothing scheduled — enjoy the free day! 🌿</div>`:evs.map(ev=>evCard(ev)).join("");})()}
+            ${(()=>{const evs=getEvs(sel||TODAY);return evs.length===0?`<div class="day-panel-empty">Nothing scheduled — enjoy the free day! 🌿</div>`:evs.map(ev=>evCard(ev,sel||TODAY)).join("");})()}
           </div>
         </div>`:""}
         ${view==="month"?`
@@ -455,7 +455,7 @@ input, select, textarea { font-family: inherit; }
             ${Array.from({length:dIM}).map((_,i)=>{
               const day=i+1,ds=`${yr}-${String(mo+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
               const evs=getEvs(ds),isT=ds===TODAY,isA=sel===ds;
-              return`<div class="day-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="day-num">${day}</div>${evs.slice(0,3).map(ev=>{const span=getSpan(ev,ds);const spanCls=span?` multiday-${span}`:"";return`<div class="ev-pill${spanCls}" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev,ds))}</div>`;}).join("")}${evs.length>3?`<div class="ev-more">+${evs.length-3} more</div>`:""}</div>`;
+              return`<div class="day-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="day-num">${day}</div>${evs.slice(0,3).map(ev=>{const span=getSpan(ev,ds);const spanCls=span?` multiday-${span}`:"";return`<div class="ev-pill${spanCls}" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}" data-ds="${ds}">${esc(pillLabel(ev,ds))}</div>`;}).join("")}${evs.length>3?`<div class="ev-more">+${evs.length-3} more</div>`:""}</div>`;
             }).join("")}
           </div>
           ${sel?dayPanel(sel):""}
@@ -465,7 +465,7 @@ input, select, textarea { font-family: inherit; }
           <div class="week-grid">
             ${wkDays.map(ds=>{
               const evs=getEvs(ds),d=new Date(ds+"T12:00:00"),isT=ds===TODAY,isA=sel===ds;
-              return`<div class="week-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="week-cell-hdr"><div class="week-day-name">${DAYS[d.getDay()]}</div><div class="week-day-num">${d.getDate()}</div><div class="week-month">${MONTHS[d.getMonth()].slice(0,3)}</div></div>${evs.length===0?`<div class="week-empty">—</div>`:""}${evs.slice(0,5).map(ev=>{const span=getSpan(ev,ds);const spanCls=span?` multiday-${span}`:"";return`<div class="ev-pill${spanCls}" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev,ds))}</div>`;}).join("")}${evs.length>5?`<div class="ev-more">+${evs.length-5}</div>`:""}<button class="week-add-btn" data-ds="${ds}">+ add</button></div>`;
+              return`<div class="week-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="week-cell-hdr"><div class="week-day-name">${DAYS[d.getDay()]}</div><div class="week-day-num">${d.getDate()}</div><div class="week-month">${MONTHS[d.getMonth()].slice(0,3)}</div></div>${evs.length===0?`<div class="week-empty">—</div>`:""}${evs.slice(0,5).map(ev=>{const span=getSpan(ev,ds);const spanCls=span?` multiday-${span}`:"";return`<div class="ev-pill${spanCls}" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}" data-ds="${ds}">${esc(pillLabel(ev,ds))}</div>`;}).join("")}${evs.length>5?`<div class="ev-more">+${evs.length-5}</div>`:""}<button class="week-add-btn" data-ds="${ds}">+ add</button></div>`;
             }).join("")}
           </div>
           ${sel?dayPanel(sel):""}
@@ -478,7 +478,7 @@ input, select, textarea { font-family: inherit; }
         <div class="list-wrap">
           <div class="list-count">${listEvs.length} events in ${MONTHS[mo]}</div>
           ${listEvs.length===0?`<div class="list-empty">No events this month.</div>`:""}
-          ${listEvs.map((ev,i)=>{const prev=i>0?listEvs[i-1].displayDate:null,showH=ev.displayDate!==prev,d=new Date(ev.displayDate+"T12:00:00");return`${showH?`<div class="list-date-hdr">${DAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}</div>`:""}${evCard(ev)}`;}).join("")}
+          ${listEvs.map((ev,i)=>{const prev=i>0?listEvs[i-1].displayDate:null,showH=ev.displayDate!==prev,d=new Date(ev.displayDate+"T12:00:00");return`${showH?`<div class="list-date-hdr">${DAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}</div>`:""}${evCard(ev,ev.displayDate)}`;}).join("")}
         </div>`:""}
         <div class="notes-section">
           <div class="notes-header">
@@ -508,15 +508,15 @@ input, select, textarea { font-family: inherit; }
 
     function dayPanel(ds){
       const evs=getEvs(ds),d=new Date(ds+"T12:00:00");
-      return`<div class="day-panel"><div class="day-panel-hdr"><span class="day-panel-title">${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}</span><button class="btn-add-sm" data-addds="${ds}">+ Add</button></div>${evs.length===0?`<div class="day-panel-empty">Nothing yet — click + Add.</div>`:evs.map(ev=>evCard(ev)).join("")}</div>`;
+      return`<div class="day-panel"><div class="day-panel-hdr"><span class="day-panel-title">${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}</span><button class="btn-add-sm" data-addds="${ds}">+ Add</button></div>${evs.length===0?`<div class="day-panel-empty">Nothing yet — click + Add.</div>`:evs.map(ev=>evCard(ev,ds)).join("")}</div>`;
     }
 
-    function evCard(ev){
+    function evCard(ev, ds){
       const c=CAT_MAP[ev.category]||CAT_MAP.other;
       const timeStr = !ev.allDay && ev.time ? `<span style="color:${c.color};font-weight:700">⏰ ${fmt12(ev.time)}</span> · ` : `<span style="background:${c.color}22;color:${c.color};border-radius:4px;padding:1px 6px;font-size:10px">All day</span> · `;
       const multiStr = ev.endDate && ev.endDate > ev.date ? `<span style="font-size:10px;color:#64748b"> · 📅 ${ev.date} – ${ev.endDate}</span>` : "";
       const locStr = ev.location ? `<div class="ev-location">📍 ${esc(ev.location)}</div>` : "";
-      return`<div class="ev-card" style="background:${c.bg};border-left:4px solid ${c.color}" data-id="${ev.id}"><div class="ev-card-body"><div class="ev-card-title">${esc(ev.title)}</div><div class="ev-card-meta">${timeStr}${esc(c.label)} · ${esc(ev.member)}${ev.recurring!=="none"?` · 🔁 ${esc(RECUR_LABELS[ev.recurring]||ev.recurring)}`:""}${multiStr}</div>${locStr}${ev.notes?`<div class="ev-card-notes">${esc(ev.notes)}</div>`:""}</div><span class="ev-edit-badge" style="color:${c.color};background:${c.color}22">Edit</span></div>`;
+      return`<div class="ev-card" style="background:${c.bg};border-left:4px solid ${c.color}" data-id="${ev.id}" data-ds="${ds||ev.date}"><div class="ev-card-body"><div class="ev-card-title">${esc(ev.title)}</div><div class="ev-card-meta">${timeStr}${esc(c.label)} · ${esc(ev.member)}${ev.recurring!=="none"?` · 🔁 ${esc(RECUR_LABELS[ev.recurring]||ev.recurring)}`:""}${multiStr}</div>${locStr}${ev.notes?`<div class="ev-card-notes">${esc(ev.notes)}</div>`:""}</div><span class="ev-edit-badge" style="color:${c.color};background:${c.color}22">Edit</span></div>`;
     }
 
     function modalHTML(){
@@ -611,15 +611,14 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".week-cell").forEach(c=>c.addEventListener("click",e=>{if(e.target.classList.contains("ev-pill")||e.target.classList.contains("week-add-btn"))return;const ds=c.dataset.ds;S.sel=S.sel===ds?null:ds;render();}));
       document.querySelectorAll(".week-add-btn").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();openAdd(b.dataset.ds);}));
       document.querySelectorAll("[data-addds]").forEach(b=>b.addEventListener("click",()=>openAdd(b.dataset.addds)));
-      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.recurEditMode=null;S.editOccurrenceDate=null;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||"",endDate:ev.endDate||"",location:ev.location||""};S.modal="edit";render();}}));
+      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.recurEditMode=null;S.editOccurrenceDate=el.dataset.ds||ev.date;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||"",endDate:ev.endDate||"",location:ev.location||""};S.modal="edit";render();}}));
       $("btnAllDay")?.addEventListener("click",()=>{S.form={...S.form,allDay:true,time:""};render();});
       $("btnTimed")?.addEventListener("click",()=>{S.form={...S.form,allDay:false};render();});
 
       // Recurring edit scope choice
       $("btnEditThis")?.addEventListener("click",()=>{
         S.recurEditMode="this";
-        S.editOccurrenceDate=S.sel||TODAY;
-        // Set form date to the occurrence date so the form shows and saves correctly
+        // editOccurrenceDate was already set from the pill/card click (the specific occurrence date)
         S.form={...S.form, date:S.editOccurrenceDate};
         render();
       });
