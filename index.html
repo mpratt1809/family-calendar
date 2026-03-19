@@ -544,9 +544,11 @@ input, select, textarea { font-family: inherit; }
         <label class="modal-lbl">Title</label>
         <input class="modal-inp" id="mTitle" value="${esc(form.title)}" placeholder="Event name…"/>
         <label class="modal-lbl">Start Date</label>
-        <input class="modal-inp" id="mDate" type="date" value="${form.date}"/>
+        <input class="modal-inp" id="mDate" type="date" value="${form.date}"
+          ${S.recurEditMode==="this"?'readonly style="opacity:0.6;background:#f8fafc"':""}/>
+        ${S.recurEditMode==="this"?"":`
         <label class="modal-lbl">End Date <span style="font-size:10px;color:#94a3b8">(optional — for multi-day events)</span></label>
-        <input class="modal-inp" id="mEndDate" type="date" value="${form.endDate||""}"/>
+        <input class="modal-inp" id="mEndDate" type="date" value="${form.endDate||""}"/>`}
         <label class="modal-lbl">Timing</label>
         <div class="time-toggle">
           <button class="time-toggle-btn${form.allDay?" active":""}" id="btnAllDay">☀️ All Day</button>
@@ -616,7 +618,9 @@ input, select, textarea { font-family: inherit; }
       // Recurring edit scope choice
       $("btnEditThis")?.addEventListener("click",()=>{
         S.recurEditMode="this";
-        S.editOccurrenceDate=S.sel||S.form.date||TODAY;
+        S.editOccurrenceDate=S.sel||TODAY;
+        // Set form date to the occurrence date so the form shows and saves correctly
+        S.form={...S.form, date:S.editOccurrenceDate};
         render();
       });
       $("btnEditAll")?.addEventListener("click",()=>{
