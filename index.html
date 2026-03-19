@@ -56,6 +56,15 @@ input, select, textarea { font-family: inherit; }
 .day-num { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
 .today .day-num { color: #e8d5b7; }
 .ev-pill { font-size: 9px; color: #fff; border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; transition: opacity 0.12s; }
+.ev-pill.multiday-start { border-radius: 4px 0 0 4px; margin-right: 0; }
+.ev-pill.multiday-mid   { border-radius: 0; margin-left: 1px; margin-right: 0; opacity: 0.85; }
+.ev-pill.multiday-end   { border-radius: 0 4px 4px 0; margin-left: 1px; }
+.ev-location { font-size: 10px; color: #64748b; margin-top: 2px; display: flex; align-items: center; gap: 3px; }
+.recur-choice { background: #fff8f0; border: 1px solid #e8d5b7; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+.recur-choice-title { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+.recur-choice-btn { display: block; width: 100%; text-align: left; padding: 8px 12px; border-radius: 7px; border: 1px solid #e8d5b7; background: #fff; margin-bottom: 5px; font-size: 12px; cursor: pointer; transition: background 0.15s; }
+.recur-choice-btn:last-child { margin-bottom: 0; }
+.recur-choice-btn:hover { background: #fef3c7; }
 .ev-pill:hover { opacity: 0.82; }
 .ev-more { font-size: 9px; color: #94a3b8; }
 .day-panel { margin-top: 12px; background: #fff; border-radius: 14px; border: 1px solid #ede9e3; padding: 16px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
@@ -308,7 +317,9 @@ input, select, textarea { font-family: inherit; }
       yr:new Date().getFullYear(),mo:new Date().getMonth(),wk:wkOf(TODAY),
       sel:TODAY,fCat:"all",fMem:"all",nFilt:"all",
       modal:null,editEv:null,showJump:false,
-      form:{title:"",date:TODAY,category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:""},
+      recurEditMode:null,   // null | "this" | "all"
+      editOccurrenceDate:null,
+      form:{title:"",date:TODAY,endDate:"",category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:"",location:""},
       nText:"",nFor:"Both of Us",nCat:"general",synced:false,
       jumpMo:new Date().getMonth(), jumpYr:new Date().getFullYear(),
     };
@@ -317,14 +328,29 @@ input, select, textarea { font-family: inherit; }
       return S.events.filter(e=>{
         if(S.fCat!=="all"&&e.category!==S.fCat)return false;
         if(S.fMem!=="all"&&e.member!==S.fMem)return false;
+        // Multi-day: check if ds falls within date range
+        if(e.endDate && e.endDate > e.date) {
+          if(ds >= e.date && ds <= e.endDate) return true;
+        }
         if(e.date===ds)return true;
         if(e.recurring==="none")return false;
+        // Skip recurring on days covered by exceptions
+        if((e.exceptions||[]).includes(ds)) return false;
         return recurs(e,ds);
       }).sort((a,b)=>{
         if(a.allDay&&!b.allDay)return -1;
         if(!a.allDay&&b.allDay)return 1;
         return (a.time||"").localeCompare(b.time||"");
       });
+    }
+
+    // Get multi-day span position for a given event on a given day
+    function getSpan(ev, ds) {
+      if(!ev.endDate || ev.endDate <= ev.date) return null;
+      if(ds === ev.date) return "start";
+      if(ds === ev.endDate) return "end";
+      if(ds > ev.date && ds < ev.endDate) return "mid";
+      return null;
     }
 
     function saveEvent(ev)   { set(ref(db,`events/${ev.id}`),ev); }
@@ -345,9 +371,11 @@ input, select, textarea { font-family: inherit; }
       render();
     });
 
-    function pillLabel(ev) {
+    function pillLabel(ev, ds) {
       const time = !ev.allDay && ev.time ? fmt12(ev.time)+" " : "";
-      return time + ev.title;
+      const span = ds ? getSpan(ev, ds) : null;
+      const prefix = span === "start" ? "↦ " : span === "mid" ? "· " : span === "end" ? "↤ " : "";
+      return prefix + time + ev.title;
     }
 
     function render() {
@@ -427,7 +455,7 @@ input, select, textarea { font-family: inherit; }
             ${Array.from({length:dIM}).map((_,i)=>{
               const day=i+1,ds=`${yr}-${String(mo+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
               const evs=getEvs(ds),isT=ds===TODAY,isA=sel===ds;
-              return`<div class="day-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="day-num">${day}</div>${evs.slice(0,3).map(ev=>`<div class="ev-pill" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev))}</div>`).join("")}${evs.length>3?`<div class="ev-more">+${evs.length-3} more</div>`:""}</div>`;
+              return`<div class="day-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="day-num">${day}</div>${evs.slice(0,3).map(ev=>{const span=getSpan(ev,ds);const spanCls=span?` multiday-${span}`:"";return`<div class="ev-pill${spanCls}" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev,ds))}</div>`;}).join("")}${evs.length>3?`<div class="ev-more">+${evs.length-3} more</div>`:""}</div>`;
             }).join("")}
           </div>
           ${sel?dayPanel(sel):""}
@@ -437,7 +465,7 @@ input, select, textarea { font-family: inherit; }
           <div class="week-grid">
             ${wkDays.map(ds=>{
               const evs=getEvs(ds),d=new Date(ds+"T12:00:00"),isT=ds===TODAY,isA=sel===ds;
-              return`<div class="week-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="week-cell-hdr"><div class="week-day-name">${DAYS[d.getDay()]}</div><div class="week-day-num">${d.getDate()}</div><div class="week-month">${MONTHS[d.getMonth()].slice(0,3)}</div></div>${evs.length===0?`<div class="week-empty">—</div>`:""}${evs.slice(0,5).map(ev=>`<div class="ev-pill" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev))}</div>`).join("")}${evs.length>5?`<div class="ev-more">+${evs.length-5}</div>`:""}<button class="week-add-btn" data-ds="${ds}">+ add</button></div>`;
+              return`<div class="week-cell${isT?" today":""}${isA?" selected":""}" data-ds="${ds}"><div class="week-cell-hdr"><div class="week-day-name">${DAYS[d.getDay()]}</div><div class="week-day-num">${d.getDate()}</div><div class="week-month">${MONTHS[d.getMonth()].slice(0,3)}</div></div>${evs.length===0?`<div class="week-empty">—</div>`:""}${evs.slice(0,5).map(ev=>{const span=getSpan(ev,ds);const spanCls=span?` multiday-${span}`:"";return`<div class="ev-pill${spanCls}" style="background:${CAT_MAP[ev.category]?.color||"#94a3b8"}" data-id="${ev.id}">${esc(pillLabel(ev,ds))}</div>`;}).join("")}${evs.length>5?`<div class="ev-more">+${evs.length-5}</div>`:""}<button class="week-add-btn" data-ds="${ds}">+ add</button></div>`;
             }).join("")}
           </div>
           ${sel?dayPanel(sel):""}
@@ -486,29 +514,54 @@ input, select, textarea { font-family: inherit; }
     function evCard(ev){
       const c=CAT_MAP[ev.category]||CAT_MAP.other;
       const timeStr = !ev.allDay && ev.time ? `<span style="color:${c.color};font-weight:700">⏰ ${fmt12(ev.time)}</span> · ` : `<span style="background:${c.color}22;color:${c.color};border-radius:4px;padding:1px 6px;font-size:10px">All day</span> · `;
-      return`<div class="ev-card" style="background:${c.bg};border-left:4px solid ${c.color}" data-id="${ev.id}"><div class="ev-card-body"><div class="ev-card-title">${esc(ev.title)}</div><div class="ev-card-meta">${timeStr}${esc(c.label)} · ${esc(ev.member)}${ev.recurring!=="none"?` · 🔁 ${esc(RECUR_LABELS[ev.recurring]||ev.recurring)}`:""}</div>${ev.notes?`<div class="ev-card-notes">${esc(ev.notes)}</div>`:""}</div><span class="ev-edit-badge" style="color:${c.color};background:${c.color}22">Edit</span></div>`;
+      const multiStr = ev.endDate && ev.endDate > ev.date ? `<span style="font-size:10px;color:#64748b"> · 📅 ${ev.date} – ${ev.endDate}</span>` : "";
+      const locStr = ev.location ? `<div class="ev-location">📍 ${esc(ev.location)}</div>` : "";
+      return`<div class="ev-card" style="background:${c.bg};border-left:4px solid ${c.color}" data-id="${ev.id}"><div class="ev-card-body"><div class="ev-card-title">${esc(ev.title)}</div><div class="ev-card-meta">${timeStr}${esc(c.label)} · ${esc(ev.member)}${ev.recurring!=="none"?` · 🔁 ${esc(RECUR_LABELS[ev.recurring]||ev.recurring)}`:""}${multiStr}</div>${locStr}${ev.notes?`<div class="ev-card-notes">${esc(ev.notes)}</div>`:""}</div><span class="ev-edit-badge" style="color:${c.color};background:${c.color}22">Edit</span></div>`;
     }
 
     function modalHTML(){
       const {form,editEv}=S;
+      // Show recur choice prompt when editing a recurring event
+      const isRecurEdit = editEv && editEv.recurring && editEv.recurring !== "none" && !S.recurEditMode;
+      if(isRecurEdit){
+        return`<div class="modal-overlay" id="modalOverlay"><div class="modal">
+          <div class="modal-title">Edit Recurring Event</div>
+          <p style="font-size:13px;color:#64748b;margin-bottom:16px">"${esc(editEv.title)}" repeats ${esc(RECUR_LABELS[editEv.recurring]||editEv.recurring)}. What would you like to change?</p>
+          <div class="recur-choice">
+            <div class="recur-choice-title">📅 Choose edit scope</div>
+            <button class="recur-choice-btn" id="btnEditThis">✏️ Edit this occurrence only</button>
+            <button class="recur-choice-btn" id="btnEditAll">🔄 Edit all future occurrences</button>
+          </div>
+          <div class="modal-btns">
+            <button class="modal-cancel" id="btnCancel">Cancel</button>
+            <button class="modal-delete" id="btnDelete">🗑 Delete All</button>
+          </div>
+        </div></div>`;
+      }
       return`<div class="modal-overlay" id="modalOverlay"><div class="modal">
-        <div class="modal-title">${editEv?"Edit Event":"New Event"}</div>
+        <div class="modal-title">${editEv ? (S.recurEditMode==="this" ? "Edit This Occurrence" : "Edit Event") : "New Event"}</div>
+        ${S.recurEditMode==="this"?`<div style="font-size:11px;color:#c9a96e;background:#fffbf0;border:1px solid #e8d5b7;border-radius:7px;padding:6px 10px;margin-bottom:12px">✏️ Editing only: ${esc(S.editOccurrenceDate||"")}</div>`:""}
         <label class="modal-lbl">Title</label>
         <input class="modal-inp" id="mTitle" value="${esc(form.title)}" placeholder="Event name…"/>
-        <label class="modal-lbl">Date</label>
+        <label class="modal-lbl">Start Date</label>
         <input class="modal-inp" id="mDate" type="date" value="${form.date}"/>
+        <label class="modal-lbl">End Date <span style="font-size:10px;color:#94a3b8">(optional — for multi-day events)</span></label>
+        <input class="modal-inp" id="mEndDate" type="date" value="${form.endDate||""}"/>
         <label class="modal-lbl">Timing</label>
         <div class="time-toggle">
           <button class="time-toggle-btn${form.allDay?" active":""}" id="btnAllDay">☀️ All Day</button>
           <button class="time-toggle-btn${!form.allDay?" active":""}" id="btnTimed">⏰ Specific Time</button>
         </div>
         ${!form.allDay?`<div class="time-row"><input type="time" id="mTime" value="${esc(form.time)}" /></div>`:""}
+        <label class="modal-lbl">Location <span style="font-size:10px;color:#94a3b8">(optional)</span></label>
+        <input class="modal-inp" id="mLocation" value="${esc(form.location||"")}" placeholder="e.g. Cap City Comedy Club, Austin TX"/>
         <label class="modal-lbl">Category</label>
         <select class="modal-inp" id="mCat">${CATEGORIES.map(c=>`<option value="${c.id}"${form.category===c.id?" selected":""}>${esc(c.label)}</option>`).join("")}</select>
         <label class="modal-lbl">Who</label>
         <select class="modal-inp" id="mMem">${MEMBERS.map(m=>`<option value="${esc(m)}"${form.member===m?" selected":""}>${esc(m)}</option>`).join("")}</select>
+        ${S.recurEditMode!=="this"?`
         <label class="modal-lbl">Recurring</label>
-        <select class="modal-inp" id="mRec">${Object.entries(RECUR_LABELS).map(([v,l])=>`<option value="${v}"${form.recurring===v?" selected":""}>${l}</option>`).join("")}</select>
+        <select class="modal-inp" id="mRec">${Object.entries(RECUR_LABELS).map(([v,l])=>`<option value="${v}"${form.recurring===v?" selected":""}>${l}</option>`).join("")}</select>`:""}
         <label class="modal-lbl">Notes</label>
         <textarea class="modal-inp modal-ta" id="mNotes">${esc(form.notes)}</textarea>
         <div class="modal-btns">
@@ -556,19 +609,55 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".week-cell").forEach(c=>c.addEventListener("click",e=>{if(e.target.classList.contains("ev-pill")||e.target.classList.contains("week-add-btn"))return;const ds=c.dataset.ds;S.sel=S.sel===ds?null:ds;render();}));
       document.querySelectorAll(".week-add-btn").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();openAdd(b.dataset.ds);}));
       document.querySelectorAll("[data-addds]").forEach(b=>b.addEventListener("click",()=>openAdd(b.dataset.addds)));
-      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||""};S.modal="edit";render();}}));
+      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.recurEditMode=null;S.editOccurrenceDate=null;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||"",endDate:ev.endDate||"",location:ev.location||""};S.modal="edit";render();}}));
       $("btnAllDay")?.addEventListener("click",()=>{S.form={...S.form,allDay:true,time:""};render();});
       $("btnTimed")?.addEventListener("click",()=>{S.form={...S.form,allDay:false};render();});
+
+      // Recurring edit scope choice
+      $("btnEditThis")?.addEventListener("click",()=>{
+        S.recurEditMode="this";
+        S.editOccurrenceDate=S.sel||S.form.date||TODAY;
+        render();
+      });
+      $("btnEditAll")?.addEventListener("click",()=>{
+        S.recurEditMode="all";
+        render();
+      });
+
       $("btnSave")?.addEventListener("click",()=>{
         const title=$("mTitle").value.trim(),date=$("mDate").value;
         if(!title||!date)return;
         const allDay=S.form.allDay;
         const time=allDay?"":(($("mTime")?.value)||"");
-        const ev={...S.form,title,date,allDay,time,category:$("mCat").value,member:$("mMem").value,recurring:$("mRec").value,notes:$("mNotes").value,id:S.editEv?S.editEv.id:"e_"+Date.now()};
-        saveEvent(ev);S.modal=null;S.editEv=null;render();
+        const endDate=$("mEndDate")?.value||"";
+        const location=$("mLocation")?.value||"";
+
+        if(S.recurEditMode==="this" && S.editEv){
+          // Create a one-time exception event for this occurrence
+          const exceptEv={
+            ...S.form,title,date:S.editOccurrenceDate,endDate:"",allDay,time,location,
+            category:$("mCat").value,member:$("mMem").value,
+            notes:$("mNotes").value,
+            recurring:"none",
+            id:"e_exc_"+Date.now(),
+            exceptionOf:S.editEv.id,
+          };
+          // Add this date to the original event's exceptions array
+          const origExceptions=[...(S.editEv.exceptions||[]),S.editOccurrenceDate];
+          update(ref(db,`events/${S.editEv.id}`),{exceptions:origExceptions});
+          saveEvent(exceptEv);
+        } else {
+          const ev={...S.form,title,date,endDate,allDay,time,location,
+            category:$("mCat").value,member:$("mMem").value,
+            recurring:$("mRec")?.value||S.form.recurring,
+            notes:$("mNotes").value,
+            id:S.editEv?S.editEv.id:"e_"+Date.now()};
+          saveEvent(ev);
+        }
+        S.modal=null;S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;render();
       });
-      $("btnCancel")?.addEventListener("click",()=>{S.modal=null;render();});
-      $("btnDelete")?.addEventListener("click",()=>{if(S.editEv){deleteEvent(S.editEv.id);S.modal=null;S.editEv=null;render();}});
+      $("btnCancel")?.addEventListener("click",()=>{S.modal=null;S.editEv=null;S.recurEditMode=null;render();});
+      $("btnDelete")?.addEventListener("click",()=>{if(S.editEv){deleteEvent(S.editEv.id);S.modal=null;S.editEv=null;S.recurEditMode=null;render();}});
       $("modalOverlay")?.addEventListener("click",e=>{if(e.target.id==="modalOverlay"){S.modal=null;render();}});
       const ni=$("noteInput");
       if(ni){ni.addEventListener("input",e=>S.nText=e.target.value);ni.addEventListener("keydown",e=>{if(e.key==="Enter")addNote();});}
@@ -581,7 +670,7 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".note-del-btn").forEach(b=>b.addEventListener("click",()=>deleteNote(b.dataset.nid)));
     }
 
-    function openAdd(ds){S.editEv=null;S.form={title:"",date:ds||TODAY,category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:""};S.modal="add";render();}
+    function openAdd(ds){S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;S.form={title:"",date:ds||TODAY,endDate:"",category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:"",location:""};S.modal="add";render();}
     function addNote(){
       const ni=document.getElementById("noteInput");
       const text=(ni?.value||S.nText).trim();
