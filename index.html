@@ -526,15 +526,19 @@ input, select, textarea { font-family: inherit; }
       if(isRecurEdit){
         return`<div class="modal-overlay" id="modalOverlay"><div class="modal">
           <div class="modal-title">Edit Recurring Event</div>
-          <p style="font-size:13px;color:#64748b;margin-bottom:16px">"${esc(editEv.title)}" repeats ${esc(RECUR_LABELS[editEv.recurring]||editEv.recurring)}. What would you like to change?</p>
+          <p style="font-size:13px;color:#64748b;margin-bottom:16px">"${esc(editEv.title)}" repeats ${esc(RECUR_LABELS[editEv.recurring]||editEv.recurring)}. What would you like to do?</p>
           <div class="recur-choice">
-            <div class="recur-choice-title">📅 Choose edit scope</div>
+            <div class="recur-choice-title">✏️ Edit</div>
             <button class="recur-choice-btn" id="btnEditThis">✏️ Edit this occurrence only</button>
-            <button class="recur-choice-btn" id="btnEditAll">🔄 Edit all future occurrences</button>
+            <button class="recur-choice-btn" id="btnEditAll">🔄 Edit all occurrences</button>
+          </div>
+          <div class="recur-choice" style="margin-top:12px">
+            <div class="recur-choice-title">🗑 Delete</div>
+            <button class="recur-choice-btn" id="btnDeleteThis" style="border-color:#f87171;color:#f87171">🗑 Delete this occurrence only</button>
+            <button class="recur-choice-btn" id="btnDeleteAll" style="border-color:#ef4444;color:#ef4444">🗑 Delete ALL occurrences</button>
           </div>
           <div class="modal-btns">
             <button class="modal-cancel" id="btnCancel">Cancel</button>
-            <button class="modal-delete" id="btnDelete">🗑 Delete All</button>
           </div>
         </div></div>`;
       }
@@ -617,13 +621,28 @@ input, select, textarea { font-family: inherit; }
       // Recurring edit scope choice
       $("btnEditThis")?.addEventListener("click",()=>{
         S.recurEditMode="this";
-        // editOccurrenceDate was already set from the pill/card click (the specific occurrence date)
         S.form={...S.form, date:S.editOccurrenceDate};
         render();
       });
       $("btnEditAll")?.addEventListener("click",()=>{
         S.recurEditMode="all";
         render();
+      });
+      // Delete this occurrence only (from recurring choice dialog)
+      $("btnDeleteThis")?.addEventListener("click",()=>{
+        if(S.editEv && S.editOccurrenceDate){
+          // Add this date to exceptions so it no longer renders
+          const origExceptions=[...(S.editEv.exceptions||[]),S.editOccurrenceDate];
+          update(ref(db,`events/${S.editEv.id}`),{exceptions:origExceptions});
+          // Also update local state immediately
+          S.editEv.exceptions = origExceptions;
+        }
+        S.modal=null;S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;render();
+      });
+      // Delete all occurrences (from recurring choice dialog)
+      $("btnDeleteAll")?.addEventListener("click",()=>{
+        if(S.editEv) deleteEvent(S.editEv.id);
+        S.modal=null;S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;render();
       });
 
       $("btnSave")?.addEventListener("click",()=>{
@@ -661,7 +680,19 @@ input, select, textarea { font-family: inherit; }
         S.modal=null;S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;render();
       });
       $("btnCancel")?.addEventListener("click",()=>{S.modal=null;S.editEv=null;S.recurEditMode=null;render();});
-      $("btnDelete")?.addEventListener("click",()=>{if(S.editEv){deleteEvent(S.editEv.id);S.modal=null;S.editEv=null;S.recurEditMode=null;render();}});
+      $("btnDelete")?.addEventListener("click",()=>{
+        if(!S.editEv) return;
+        if(S.recurEditMode==="this" && S.editOccurrenceDate){
+          // Delete only this occurrence — add to exceptions array
+          const origExceptions=[...(S.editEv.exceptions||[]),S.editOccurrenceDate];
+          update(ref(db,`events/${S.editEv.id}`),{exceptions:origExceptions});
+          S.editEv.exceptions = origExceptions;
+        } else {
+          // Delete the entire event (all occurrences)
+          deleteEvent(S.editEv.id);
+        }
+        S.modal=null;S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;render();
+      });
       $("modalOverlay")?.addEventListener("click",e=>{if(e.target.id==="modalOverlay"){S.modal=null;render();}});
       const ni=$("noteInput");
       if(ni){ni.addEventListener("input",e=>S.nText=e.target.value);ni.addEventListener("keydown",e=>{if(e.key==="Enter")addNote();});}
