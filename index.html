@@ -166,7 +166,41 @@ input, select, textarea { font-family: inherit; }
 .time-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
 .time-row input[type=time] { flex: 1; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 12px; font-size: 13px; background: #fafafa; outline: none; }
 .time-row input[type=time]:focus { border-color: #c9a96e; }
-/* Day view big date display */
+/* ── Tasks / Requests ── */
+.tasks-widget { margin: 0 16px 14px; background: #fff; border-radius: 14px; border: 1px solid #ede9e3; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+.tasks-widget-hdr { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; background: #1a1a2e; cursor: pointer; user-select: none; }
+.tasks-widget-left { display: flex; align-items: center; gap: 8px; }
+.tasks-widget-title { font-size: 13px; font-weight: 700; color: #fff; }
+.tasks-badge { background: #c9a96e; color: #1a1a2e; border-radius: 20px; font-size: 11px; font-weight: 700; padding: 2px 8px; }
+.tasks-badge.none { background: rgba(255,255,255,0.12); color: #94a3b8; }
+.tasks-chevron { color: #e8d5b7; font-size: 12px; transition: transform 0.2s; }
+.tasks-chevron.open { transform: rotate(180deg); }
+.tasks-body { padding: 10px 14px 12px; }
+.tasks-add-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.task-input { flex: 1; border: 1px solid #e2e8f0; border-radius: 9px; padding: 8px 12px; font-size: 13px; background: #fafafa; outline: none; font-family: inherit; }
+.task-input:focus { border-color: #c9a96e; }
+.task-from-sel { border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 10px; font-size: 12px; background: #fff; font-family: inherit; }
+.task-add-btn { background: #1a1a2e; color: #e8d5b7; border: none; border-radius: 9px; padding: 8px 14px; font-size: 12px; font-weight: 700; white-space: nowrap; font-family: inherit; }
+.task-list { display: flex; flex-direction: column; gap: 6px; }
+.task-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #ede9e3; border-radius: 9px; transition: all 0.15s; }
+.task-item.done { background: #f8fafc; opacity: 0.6; }
+.task-check { flex-shrink: 0; width: 18px; height: 18px; border-radius: 5px; border: 2px solid #cbd5e1; background: transparent; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; transition: all 0.15s; cursor: pointer; }
+.task-check.checked { background: #34d399; border-color: #34d399; }
+.task-text { flex: 1; font-size: 13px; }
+.task-text.struck { text-decoration: line-through; color: #94a3b8; }
+.task-from { font-size: 10px; color: #94a3b8; white-space: nowrap; }
+.task-del { background: none; border: none; font-size: 13px; opacity: 0.3; cursor: pointer; padding: 2px; }
+.task-del:hover { opacity: 0.8; }
+.tasks-empty { font-size: 12px; color: #94a3b8; text-align: center; padding: 8px 0; }
+/* Tasks in notes section */
+.tasks-section { margin: 0 16px 16px; background: #fff; border-radius: 16px; border: 1px solid #ede9e3; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.tasks-section-hdr { background: #0f3460; padding: 13px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.tasks-section-title { font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px; }
+.tasks-filter-row { display: flex; gap: 5px; }
+.tasks-filter-btn { background: rgba(255,255,255,0.1); color: #e8d5b7; border: 1px solid rgba(232,213,183,0.25); border-radius: 7px; padding: 4px 11px; font-size: 11px; cursor: pointer; font-family: inherit; }
+.tasks-filter-btn.active { background: #e8d5b7; color: #1a1a2e; font-weight: 700; }
+.tasks-section-add { padding: 13px 18px; background: #f8f6f2; border-bottom: 1px solid #ede9e3; display: flex; flex-direction: column; gap: 8px; }
+.tasks-section-list { padding: 12px 18px 16px; display: flex; flex-direction: column; gap: 6px; }
 .day-view-date { text-align: center; padding: 16px 0 20px; }
 .day-view-dayname { font-size: 13px; font-weight: 700; color: #94a3b8; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
 .day-view-num { font-size: 56px; font-weight: 700; line-height: 1; font-family: 'Playfair Display', Georgia, serif; color: #1a1a2e; }
@@ -313,14 +347,14 @@ input, select, textarea { font-family: inherit; }
     }
 
     let S = {
-      events:[],notes:[],view:"day",
+      events:[],notes:[],tasks:[],view:"day",
       yr:new Date().getFullYear(),mo:new Date().getMonth(),wk:wkOf(TODAY),
-      sel:TODAY,fCat:"all",fMem:"all",nFilt:"all",
+      sel:TODAY,fCat:"all",fMem:"all",nFilt:"all",tFilt:"open",tasksOpen:true,
       modal:null,editEv:null,showJump:false,
-      recurEditMode:null,   // null | "this" | "all"
+      recurEditMode:null,
       editOccurrenceDate:null,
-      form:{title:"",date:TODAY,endDate:"",category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:"",location:""},
-      nText:"",nFor:"Both of Us",nCat:"general",synced:false,
+      form:{title:"",date:TODAY,endDate:"",category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:"",location:"",invitees:""},
+      nText:"",tText:"",tFrom:"Me",nFor:"Both of Us",nCat:"general",synced:false,
       jumpMo:new Date().getMonth(), jumpYr:new Date().getFullYear(),
     };
 
@@ -358,6 +392,9 @@ input, select, textarea { font-family: inherit; }
     function saveNote(note)  { set(ref(db,`notes/${note.id}`),note); }
     function deleteNote(id)  { remove(ref(db,`notes/${id}`)); }
     function patchNote(id,ch){ update(ref(db,`notes/${id}`),ch); }
+    function saveTask(task)  { set(ref(db,`tasks/${task.id}`),task); }
+    function deleteTask(id)  { remove(ref(db,`tasks/${id}`)); }
+    function patchTask(id,ch){ update(ref(db,`tasks/${id}`),ch); }
 
     onValue(ref(db,"events"),snap=>{
       const val=snap.val();
@@ -370,6 +407,21 @@ input, select, textarea { font-family: inherit; }
       S.notes=val?Object.values(val).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)):[];
       render();
     });
+    onValue(ref(db,"tasks"),snap=>{
+      const val=snap.val();
+      S.tasks=val?Object.values(val).sort((a,b)=>(a.done?1:0)-(b.done?1:0)):[];
+      render();
+    });
+
+    // Fallback: if Firebase hasn't responded in 6 seconds, load with seed data so app isn't stuck
+    setTimeout(()=>{
+      if(!S.synced){
+        S.events=SEED_EVENTS;
+        S.synced=true;
+        render();
+        console.warn("Firebase timeout — loaded seed data as fallback");
+      }
+    },6000);
 
     function pillLabel(ev, ds) {
       const time = !ev.allDay && ev.time ? fmt12(ev.time)+" " : "";
@@ -380,7 +432,7 @@ input, select, textarea { font-family: inherit; }
 
     function render() {
       const app=document.getElementById("app");
-      if(!S.synced){app.innerHTML=`<div class="loading"><div class="loading-icon">🏡</div><div class="loading-text">Connecting to Firebase…</div></div>`;return;}
+      if(!S.synced){app.innerHTML=`<div class="loading"><div class="loading-icon">🏡</div><div class="loading-text">Connecting to calendar…</div><div style="font-size:12px;color:#94a3b8;margin-top:8px">If this takes more than a few seconds, check your connection</div></div>`;return;}
       const {yr,mo,wk,view,sel,fCat,fMem,nFilt}=S;
       const dIM=dim(yr,mo),fD=fd(yr,mo);
       const wkDays=Array.from({length:7},(_,i)=>addDays(wk,i));
@@ -439,6 +491,37 @@ input, select, textarea { font-family: inherit; }
             <div class="day-view-num">${new Date((sel||TODAY)+"T12:00:00").getDate()}</div>
             <div class="day-view-month">${(()=>{const d=new Date((sel||TODAY)+"T12:00:00");return MONTHS[d.getMonth()]+" "+d.getFullYear();})()}</div>
           </div>
+          ${(()=>{
+            const openTasks=S.tasks.filter(t=>!t.done);
+            return`<div class="tasks-widget">
+              <div class="tasks-widget-hdr" id="tasksWidgetHdr">
+                <div class="tasks-widget-left">
+                  <span>📋</span>
+                  <span class="tasks-widget-title">Requests</span>
+                  <span class="tasks-badge${openTasks.length===0?" none":""}">${openTasks.length===0?"all clear":openTasks.length+" open"}</span>
+                </div>
+                <span class="tasks-chevron${S.tasksOpen?" open":""}">▼</span>
+              </div>
+              ${S.tasksOpen?`<div class="tasks-body">
+                <div class="tasks-add-row">
+                  <input id="taskInputWidget" class="task-input" placeholder="Ask Sky to grab something…" value="${esc(S.tText)}"/>
+                  <select id="taskFromWidget" class="task-from-sel">
+                    ${["Me","Sky"].map(m=>`<option value="${esc(m)}"${S.tFrom===m?" selected":""}>${esc(m)}</option>`).join("")}
+                  </select>
+                  <button class="task-add-btn" id="btnAddTaskWidget">+ Add</button>
+                </div>
+                <div class="task-list">
+                  ${S.tasks.length===0?`<div class="tasks-empty">No open requests 🎉</div>`:""}
+                  ${S.tasks.map(t=>`<div class="task-item${t.done?" done":""}">
+                    <button class="task-check${t.done?" checked":""}" data-tid="${t.id}">${t.done?"✓":""}</button>
+                    <span class="task-text${t.done?" struck":""}">${esc(t.text)}</span>
+                    <span class="task-from">from ${esc(t.from)}</span>
+                    <button class="task-del" data-tid="${t.id}">🗑</button>
+                  </div>`).join("")}
+                </div>
+              </div>`:""}
+            </div>`;
+          })()}
           <div class="day-panel" style="margin-top:0">
             <div class="day-panel-hdr">
               <span class="day-panel-title">${(()=>{const evs=getEvs(sel||TODAY);return evs.length+" event"+(evs.length!==1?"s":"");})()}</span>
@@ -480,6 +563,39 @@ input, select, textarea { font-family: inherit; }
           ${listEvs.length===0?`<div class="list-empty">No events this month.</div>`:""}
           ${listEvs.map((ev,i)=>{const prev=i>0?listEvs[i-1].displayDate:null,showH=ev.displayDate!==prev,d=new Date(ev.displayDate+"T12:00:00");return`${showH?`<div class="list-date-hdr">${DAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}</div>`:""}${evCard(ev,ev.displayDate)}`;}).join("")}
         </div>`:""}
+        <div class="tasks-section">
+          <div class="tasks-section-hdr">
+            <div class="tasks-section-title">
+              <span>📋</span><span>Requests &amp; Tasks</span>
+              ${(()=>{const o=S.tasks.filter(t=>!t.done).length;return o>0?`<span class="notes-badge">${o} open</span>`:""})()}
+            </div>
+            <div class="tasks-filter-row">
+              ${[["open","Open"],["all","All"],["done","Done"]].map(([v,l])=>`<button class="tasks-filter-btn${S.tFilt===v?" active":""}" data-tfilt="${v}">${l}</button>`).join("")}
+            </div>
+          </div>
+          <div class="tasks-section-add">
+            <div class="tasks-add-row">
+              <input id="taskInputFull" class="task-input" placeholder="e.g. Grab oat milk on the way home" value="${esc(S.tText)}"/>
+              <button class="task-add-btn" id="btnAddTaskFull">+ Add</button>
+            </div>
+            <div style="display:flex;gap:8px">
+              <span style="font-size:12px;color:#64748b;align-self:center">From:</span>
+              ${["Me","Sky"].map(m=>`<button class="tasks-filter-btn${S.tFrom===m?" active":""}" data-tfrom="${m}">${esc(m)}</button>`).join("")}
+            </div>
+          </div>
+          <div class="tasks-section-list">
+            ${(()=>{
+              const vis=S.tasks.filter(t=>S.tFilt==="open"?!t.done:S.tFilt==="done"?t.done:true);
+              if(vis.length===0) return`<div class="tasks-empty">${S.tFilt==="done"?"No completed tasks yet.":S.tFilt==="open"?"No open requests 🎉 — all clear!":"No tasks yet — add one above!"}</div>`;
+              return vis.map(t=>`<div class="task-item${t.done?" done":""}">
+                <button class="task-check${t.done?" checked":""}" data-tid="${t.id}">${t.done?"✓":""}</button>
+                <span class="task-text${t.done?" struck":""}">${esc(t.text)}</span>
+                <span class="task-from">from ${esc(t.from)}</span>
+                <button class="task-del" data-tid="${t.id}">🗑</button>
+              </div>`).join("");
+            })()}
+          </div>
+        </div>
         <div class="notes-section">
           <div class="notes-header">
             <div class="notes-title-row"><span>📝</span><span class="notes-title">Notes &amp; Reminders</span>${activeNotes>0?`<span class="notes-badge">${activeNotes} active</span>`:""}</div>
@@ -569,12 +685,97 @@ input, select, textarea { font-family: inherit; }
         <select class="modal-inp" id="mRec">${Object.entries(RECUR_LABELS).map(([v,l])=>`<option value="${v}"${form.recurring===v?" selected":""}>${l}</option>`).join("")}</select>`:""}
         <label class="modal-lbl">Notes</label>
         <textarea class="modal-inp modal-ta" id="mNotes">${esc(form.notes)}</textarea>
+        <label class="modal-lbl">Invite via email <span style="font-size:10px;color:#94a3b8">(optional — separate multiple with commas)</span></label>
+        <input class="modal-inp" id="mInvitees" value="${esc(form.invitees||"")}" placeholder="e.g. friend@email.com, vet@clinic.com"/>
         <div class="modal-btns">
           <button class="modal-save" id="btnSave">${editEv?"Save Changes":"Add Event"}</button>
           <button class="modal-cancel" id="btnCancel">Cancel</button>
           ${editEv?`<button class="modal-delete" id="btnDelete">🗑</button>`:""}
         </div>
+        ${editEv && editEv.invitees ? `<button id="btnSendInvite" style="width:100%;margin-top:8px;padding:10px;border-radius:8px;border:1px solid #60a5fa;background:#eff6ff;color:#2563eb;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">📧 Send Invite Email</button>` : ""}
       </div></div>`;
+    }
+
+    // ── ICS Calendar Invite Generator ────────────────────────────
+    function formatICSDate(ds, time, allDay) {
+      const d = new Date(ds + "T12:00:00");
+      if (allDay) {
+        return d.toISOString().replace(/-/g,"").split("T")[0];
+      }
+      if (time) {
+        const [h,m] = time.split(":");
+        const dt = new Date(ds + `T${h.padStart(2,"0")}:${m.padStart(2,"0")}:00`);
+        return dt.toISOString().replace(/[-:]/g,"").replace(".000","");
+      }
+      return d.toISOString().replace(/[-:]/g,"").replace(".000","");
+    }
+
+    function generateICS(ev) {
+      const uid = ev.id + "@pratt-hub.calendar";
+      const now = new Date().toISOString().replace(/[-:]/g,"").replace(".000","");
+      const dtstart = ev.allDay
+        ? `DTSTART;VALUE=DATE:${formatICSDate(ev.date, null, true)}`
+        : `DTSTART:${formatICSDate(ev.date, ev.time, false)}`;
+      const dtend = ev.endDate && ev.endDate > ev.date
+        ? (ev.allDay
+          ? `DTEND;VALUE=DATE:${formatICSDate(ev.endDate, null, true)}`
+          : `DTEND:${formatICSDate(ev.endDate, ev.time, false)}`)
+        : (ev.allDay
+          ? `DTEND;VALUE=DATE:${formatICSDate(ev.date, null, true)}`
+          : `DTEND:${formatICSDate(ev.date, ev.time, false)}`);
+      const loc  = ev.location ? `LOCATION:${ev.location}` : "";
+      const desc = ev.notes    ? `DESCRIPTION:${ev.notes.replace(/\n/g,"\\n")}` : "";
+      const attendees = (ev.invitees||"").split(",").map(e=>e.trim()).filter(Boolean)
+        .map(e=>`ATTENDEE;RSVP=TRUE:mailto:${e}`).join("\r\n");
+
+      return [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Pratt Hub//Family Calendar//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:REQUEST",
+        "BEGIN:VEVENT",
+        `UID:${uid}`,
+        `DTSTAMP:${now}`,
+        dtstart,
+        dtend,
+        `SUMMARY:${ev.title}`,
+        loc,desc,attendees,
+        "STATUS:CONFIRMED",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].filter(Boolean).join("\r\n");
+    }
+
+    function sendInvite(ev) {
+      const emails = (ev.invitees||"").split(",").map(e=>e.trim()).filter(Boolean);
+      if (!emails.length) return;
+
+      // Download .ics file
+      const ics = generateICS(ev);
+      const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href = url;
+      a.download = `${ev.title.replace(/[^a-z0-9]/gi,"-")}.ics`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // Open mailto with pre-filled subject and body
+      const dateStr = new Date(ev.date+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+      const timeStr = ev.allDay ? "All day" : (ev.time ? fmt12(ev.time) : "");
+      const body = [
+        `You're invited to: ${ev.title}`,
+        `Date: ${dateStr}`,
+        timeStr ? `Time: ${timeStr}` : "",
+        ev.location ? `Location: ${ev.location}` : "",
+        ev.notes ? `Notes: ${ev.notes}` : "",
+        "",
+        "A calendar file (.ics) has been downloaded — attach it to this email so the recipient can add it to their calendar.",
+      ].filter(Boolean).join("\n");
+
+      const mailto = `mailto:${emails.join(",")}?subject=${encodeURIComponent("Invite: "+ev.title)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
     }
 
     function bind(){
@@ -614,7 +815,7 @@ input, select, textarea { font-family: inherit; }
       document.querySelectorAll(".week-cell").forEach(c=>c.addEventListener("click",e=>{if(e.target.classList.contains("ev-pill")||e.target.classList.contains("week-add-btn"))return;const ds=c.dataset.ds;S.sel=S.sel===ds?null:ds;render();}));
       document.querySelectorAll(".week-add-btn").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();openAdd(b.dataset.ds);}));
       document.querySelectorAll("[data-addds]").forEach(b=>b.addEventListener("click",()=>openAdd(b.dataset.addds)));
-      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.recurEditMode=null;S.editOccurrenceDate=el.dataset.ds||ev.date;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||"",endDate:ev.endDate||"",location:ev.location||""};S.modal="edit";render();}}));
+      document.querySelectorAll(".ev-pill,.ev-card").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const ev=S.events.find(x=>x.id===el.dataset.id);if(ev){S.editEv=ev;S.recurEditMode=null;S.editOccurrenceDate=el.dataset.ds||ev.date;S.form={...ev,allDay:ev.allDay!==false,time:ev.time||"",endDate:ev.endDate||"",location:ev.location||"",invitees:ev.invitees||""};S.modal="edit";render();}}));
       $("btnAllDay")?.addEventListener("click",()=>{S.form={...S.form,allDay:true,time:""};render();});
       $("btnTimed")?.addEventListener("click",()=>{S.form={...S.form,allDay:false};render();});
 
@@ -652,34 +853,37 @@ input, select, textarea { font-family: inherit; }
         const time=allDay?"":(($("mTime")?.value)||"");
         const endDate=$("mEndDate")?.value||"";
         const location=$("mLocation")?.value||"";
+        const invitees=$("mInvitees")?.value.trim()||"";
 
         if(S.recurEditMode==="this" && S.editEv){
-          // The new date for this occurrence (may differ from original occurrence date)
           const newDate = $("mDate").value || S.editOccurrenceDate;
-          // Create a one-time exception event for this occurrence
           const exceptEv={
-            ...S.form,title,date:newDate,endDate:"",allDay,time,location,
+            ...S.form,title,date:newDate,endDate:"",allDay,time,location,invitees,
             category:$("mCat").value,member:$("mMem").value,
             notes:$("mNotes").value,
             recurring:"none",
             id:"e_exc_"+Date.now(),
             exceptionOf:S.editEv.id,
           };
-          // Add the ORIGINAL occurrence date to exceptions so it no longer shows
           const origExceptions=[...(S.editEv.exceptions||[]),S.editOccurrenceDate];
           update(ref(db,`events/${S.editEv.id}`),{exceptions:origExceptions});
           saveEvent(exceptEv);
+          // Auto-send invite if emails provided
+          if(invitees) setTimeout(()=>sendInvite(exceptEv),300);
         } else {
-          const ev={...S.form,title,date,endDate,allDay,time,location,
+          const ev={...S.form,title,date,endDate,allDay,time,location,invitees,
             category:$("mCat").value,member:$("mMem").value,
             recurring:$("mRec")?.value||S.form.recurring,
             notes:$("mNotes").value,
             id:S.editEv?S.editEv.id:"e_"+Date.now()};
           saveEvent(ev);
+          // Auto-send invite if emails provided
+          if(invitees) setTimeout(()=>sendInvite(ev),300);
         }
         S.modal=null;S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;render();
       });
       $("btnCancel")?.addEventListener("click",()=>{S.modal=null;S.editEv=null;S.recurEditMode=null;render();});
+      $("btnSendInvite")?.addEventListener("click",()=>{ if(S.editEv) sendInvite(S.editEv); });
       $("btnDelete")?.addEventListener("click",()=>{
         if(!S.editEv) return;
         if(S.recurEditMode==="this" && S.editOccurrenceDate){
@@ -699,13 +903,45 @@ input, select, textarea { font-family: inherit; }
       $("nFor")?.addEventListener("change",e=>S.nFor=e.target.value);
       $("nCat")?.addEventListener("change",e=>S.nCat=e.target.value);
       $("btnAddNote")?.addEventListener("click",addNote);
+      // ── Task handlers ──
+      $("tasksWidgetHdr")?.addEventListener("click",()=>{S.tasksOpen=!S.tasksOpen;render();});
+      // Widget add
+      $("btnAddTaskWidget")?.addEventListener("click",()=>{
+        const txt=($("taskInputWidget")?.value||"").trim();
+        const from=$("taskFromWidget")?.value||S.tFrom;
+        if(!txt)return;
+        const task={id:"t_"+Date.now(),text:txt,from,done:false,ts:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})};
+        saveTask(task);S.tText="";render();
+      });
+      // Full section add
+      $("btnAddTaskFull")?.addEventListener("click",()=>{
+        const txt=($("taskInputFull")?.value||S.tText).trim();
+        if(!txt)return;
+        const task={id:"t_"+Date.now(),text:txt,from:S.tFrom,done:false,ts:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})};
+        saveTask(task);S.tText="";if($("taskInputFull"))$("taskInputFull").value="";render();
+      });
+      // Task input sync
+      $("taskInputWidget")?.addEventListener("input",e=>S.tText=e.target.value);
+      $("taskInputFull")?.addEventListener("input",e=>S.tText=e.target.value);
+      $("taskFromWidget")?.addEventListener("change",e=>S.tFrom=e.target.value);
+      // From toggles in full section
+      document.querySelectorAll("[data-tfrom]").forEach(b=>b.addEventListener("click",()=>{S.tFrom=b.dataset.tfrom;render();}));
+      // Filter
+      document.querySelectorAll("[data-tfilt]").forEach(b=>b.addEventListener("click",()=>{S.tFilt=b.dataset.tfilt;render();}));
+      // Check/uncheck tasks
+      document.querySelectorAll(".task-check").forEach(b=>b.addEventListener("click",()=>{
+        const t=S.tasks.find(x=>x.id===b.dataset.tid);
+        if(t)patchTask(t.id,{done:!t.done});
+      }));
+      // Delete tasks
+      document.querySelectorAll(".task-del").forEach(b=>b.addEventListener("click",()=>deleteTask(b.dataset.tid)));
       document.querySelectorAll(".notes-filter-btn").forEach(b=>b.addEventListener("click",()=>{S.nFilt=b.dataset.nfilt;render();}));
       document.querySelectorAll(".note-check").forEach(b=>b.addEventListener("click",()=>{const n=S.notes.find(x=>x.id===b.dataset.nid);if(n)patchNote(n.id,{done:!n.done});}));
       document.querySelectorAll(".note-pin-btn").forEach(b=>b.addEventListener("click",()=>{const n=S.notes.find(x=>x.id===b.dataset.nid);if(n)patchNote(n.id,{pinned:!n.pinned});}));
       document.querySelectorAll(".note-del-btn").forEach(b=>b.addEventListener("click",()=>deleteNote(b.dataset.nid)));
     }
 
-    function openAdd(ds){S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;S.form={title:"",date:ds||TODAY,endDate:"",category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:"",location:""};S.modal="add";render();}
+    function openAdd(ds){S.editEv=null;S.recurEditMode=null;S.editOccurrenceDate=null;S.form={title:"",date:ds||TODAY,endDate:"",category:"errand",member:"Both of Us",recurring:"none",notes:"",allDay:true,time:"",location:"",invitees:""};S.modal="add";render();}
     function addNote(){
       const ni=document.getElementById("noteInput");
       const text=(ni?.value||S.nText).trim();
