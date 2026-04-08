@@ -873,25 +873,33 @@ input, select, textarea { font-family: inherit; }
       $("nCat")?.addEventListener("change",e=>S.nCat=e.target.value);
       $("btnAddNote")?.addEventListener("click",addNote);
       // ── Task handlers ──
-      // Full section add
       $("btnAddTaskFull")?.addEventListener("click",()=>{
         const txt=($("taskInputFull")?.value||S.tText).trim();
         if(!txt)return;
         const task={id:"t_"+Date.now(),text:txt,from:S.tFrom,done:false,ts:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})};
-        saveTask(task);S.tText="";if($("taskInputFull"))$("taskInputFull").value="";render();
+        // Optimistically add to local state immediately — don't wait for Firebase onValue
+        S.tasks.unshift(task);
+        saveTask(task);
+        S.tText="";
+        if($("taskInputFull"))$("taskInputFull").value="";
+        render();
       });
       $("taskInputFull")?.addEventListener("input",e=>S.tText=e.target.value);
       // From toggles in full section
       document.querySelectorAll("[data-tfrom]").forEach(b=>b.addEventListener("click",()=>{S.tFrom=b.dataset.tfrom;render();}));
       // Filter
       document.querySelectorAll("[data-tfilt]").forEach(b=>b.addEventListener("click",()=>{S.tFilt=b.dataset.tfilt;render();}));
-      // Check/uncheck tasks
+      // Check/uncheck tasks — optimistic update
       document.querySelectorAll(".task-check").forEach(b=>b.addEventListener("click",()=>{
         const t=S.tasks.find(x=>x.id===b.dataset.tid);
-        if(t)patchTask(t.id,{done:!t.done});
+        if(t){ t.done=!t.done; patchTask(t.id,{done:t.done}); render(); }
       }));
-      // Delete tasks
-      document.querySelectorAll(".task-del").forEach(b=>b.addEventListener("click",()=>deleteTask(b.dataset.tid)));
+      // Delete tasks — optimistic update
+      document.querySelectorAll(".task-del").forEach(b=>b.addEventListener("click",()=>{
+        S.tasks=S.tasks.filter(t=>t.id!==b.dataset.tid);
+        deleteTask(b.dataset.tid);
+        render();
+      }));
       document.querySelectorAll(".notes-filter-btn").forEach(b=>b.addEventListener("click",()=>{S.nFilt=b.dataset.nfilt;render();}));
       document.querySelectorAll(".note-check").forEach(b=>b.addEventListener("click",()=>{const n=S.notes.find(x=>x.id===b.dataset.nid);if(n)patchNote(n.id,{done:!n.done});}));
       document.querySelectorAll(".note-pin-btn").forEach(b=>b.addEventListener("click",()=>{const n=S.notes.find(x=>x.id===b.dataset.nid);if(n)patchNote(n.id,{pinned:!n.pinned});}));
